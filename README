@@ -15,16 +15,16 @@ I'm looking for beta-tester !!! Don't hesitate to create issues, enhancement req
 2. Create/edit a file named "plugins.properties" in the FitNesse server root directory. This must contain: WikiWidgets=org.dynaresume.fitnesse.widgets.ArtifactWidget
 3. Restart FitNesse. You should see the PomWidget being loaded:
 
-          $ java -cp fitnesse.jar:aether-fitnesse-widget-1.0.0-SNAPSHOT-jar-with-dependencies.jar fitnesseMain.FitNesseMain 
-            FitNesse (v20101101) Started...
-	            port:              8087
-	            root page:         fitnesse.wiki.FileSystemPage at ./FitNesseRoot
-	            logger:            none
-	            authenticator:     fitnesse.authentication.PromiscuousAuthenticator
-	            html page factory: fitnesse.html.HtmlPageFactory
-	            page version expiration set to 14 days.
-	            Custom wiki widgets loaded:
-		            org.dynaresume.fitnesse.widgets.ArtifactWidget
+$ java -cp fitnesse.jar:aether-fitnesse-widget-1.0.0-SNAPSHOT-jar-with-dependencies.jar fitnesseMain.FitNesseMain 
+   FitNesse (v20101101) Started...
+      port:              8087
+	  root page:         fitnesse.wiki.FileSystemPage at ./FitNesseRoot
+	  logger:            none
+	  authenticator:     fitnesse.authentication.PromiscuousAuthenticator
+	  html page factory: fitnesse.html.HtmlPageFactory
+	  page version expiration set to 14 days.
+	  Custom wiki widgets loaded:
+		org.dynaresume.fitnesse.widgets.ArtifactWidget
 
 4. Create a FitNesse page with a reference to a artifact (!artifact groupId:artifactId:version). This should load your projects classpath into the page. 
 You can customize the place of the local repo by providing a value for "LOCAL_REPO" (eg : !define LOCAL_REPO {/Users/pascalleclercq/my_alternate_repo}).
