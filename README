@@ -1,54 +1,33 @@
-= fitnesse-pom-widget
+= aether-fitnesse-widget
 
 == DESCRIPTION:
 
-This is an atempt to rewrite the fitnesse-pom-widget found at: http://boss.bekk.no/fitnesse-pom-widget/
+The purpose of this widget is to dynamically calculate a classpath against a maven coordinnate "<groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>".
+Because It relies on aether (https://docs.sonatype.org/display/AETHER/Home) It should work the same for maven, Ant-Ivy or any product that use a maven repository.  
 
 == FEATURES/PROBLEMS:
 
-It's mostly up and running now.
+I'm looking for beta-tester !!! Don't hesitate to create issues, enhancement requests.
 
 == INSTALL:
 
-1. Clone this project and build it. Copy the fitnesse-pom-widget jar to your FitNesse folder and add it to the FitNesse server classpath.
-2. Download latest maven-embedder-dep.jar file and place in the FitNesse server classpath.
-3. Create/edit a file plugins.properties in the FitNesse server root directory. This should contain: WikiWidgets=no.bekk.fitnesse.plugins.widgets.PomWidget
-4. Restart FitNesse. You should see the PomWidget being loaded:
+1. Clone this project and build it (mvn clean install). Copy the aether-fitnesse-widget-<version>-jar-with-dependencies.jar file to your FitNesse folder and add it to the FitNesse server classpath.
+2. Create/edit a file named "plugins.properties" in the FitNesse server root directory. This must contain: WikiWidgets=org.dynaresume.fitnesse.widgets.ArtifactWidget
+3. Restart FitNesse. You should see the PomWidget being loaded:
 
-          $ java -cp fitnesse.jar;lib\fitnesse-pom-widget-1.2.jar;lib\maven-embedder-2.0.4-dep.jar fitnesse.FitNesse
-                FitNesse (20050731) Started...
-          port:              80
-          root page:         fitnesse.wiki.FileSystemPage at ./FitNesseRoot
-          logger:            none
-          authenticator:     fitnesse.authentication.PromiscuousAuthenticator
-          html page factory: fitnesse.html.HtmlPageFactory
-          page version expiration set to 14 days.
-          Custom wiki widgets loaded:
-                no.bekk.fitnesse.plugins.widgets.PomWidget
-5. Create a FitNesse page with a reference to your pom (!pom /myproject/pom.xml@~/.m2/repository). This should load your projects classpath into the page. The path after the "@" should point to your maven repository.
+          $ java -cp fitnesse.jar:aether-fitnesse-widget-1.0.0-SNAPSHOT-jar-with-dependencies.jar fitnesseMain.FitNesseMain 
+            FitNesse (v20101101) Started...
+	            port:              8087
+	            root page:         fitnesse.wiki.FileSystemPage at ./FitNesseRoot
+	            logger:            none
+	            authenticator:     fitnesse.authentication.PromiscuousAuthenticator
+	            html page factory: fitnesse.html.HtmlPageFactory
+	            page version expiration set to 14 days.
+	            Custom wiki widgets loaded:
+		            org.dynaresume.fitnesse.widgets.ArtifactWidget
 
-== LICENSE:
-
-(The MIT License)
-
-Copyright (c) 2008 Torbjorn Vatn
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+4. Create a FitNesse page with a reference to a artifact (!artifact groupId:artifactId:version). This should load your projects classpath into the page. 
+You can customize the place of the local repo by providing a value for "LOCAL_REPO" (eg : !define LOCAL_REPO {/Users/pascalleclercq/my_alternate_repo}).
+If not set, the maven's default value will be use : ${user.home}/.m2/repository.
+You can also define a remote repo where artifact can be downloaded if needed by providing a value for "REMOTE_REPO" (eg : !define REMOTE_REPO {http://mycompany:9080/nexus}).
 

@@ -38,23 +38,23 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
 			<plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>package</phase> <!-- append to the packaging phase. -->
-            <goals>
-              <goal>single</goal> <!-- goals == mojos -->
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -72,17 +72,6 @@
 			<version>3.8.2</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!--<dependency>
-			<groupId>org.sonatype.aether</groupId>
-			<artifactId>aether-api</artifactId>
-			<version>${aetherVersion}</version>
-		</dependency>-->
-		<!--<dependency>
-			<groupId>org.sonatype.aether</groupId>
-			<artifactId>aether-util</artifactId>
-			<version>${aetherVersion}</version>
-		</dependency>-->
 		<dependency>
 			<groupId>org.sonatype.aether</groupId>
 			<artifactId>aether-impl</artifactId>
@@ -128,12 +117,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		<!--<dependency>
-			<groupId>org.codehaus.plexus</groupId>
-			<version>2.0.4</version>
-			<artifactId>plexus-utils</artifactId>
-		</dependency>-->
 	</dependencies>
 
 	<properties>
