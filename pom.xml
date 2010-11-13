@@ -19,9 +19,9 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:git@github.com:pascalleclercq/maven-fitnesse-widget.git</connection>
-		<developerConnection>scm:git:git@github.com:pascalleclercq/maven-fitnesse-widget.git</developerConnection>
-		<url>git@github.com:pascalleclercq/maven-fitnesse-widget.git</url>
+		<connection>scm:git:git@github.com:pascalleclercq/aether-fitnesse-widget.git</connection>
+		<developerConnection>scm:git:git@github.com:pascalleclercq/aether-fitnesse-widget.git</developerConnection>
+		<url>git@github.com:pascalleclercq/aether-fitnesse-widget.git</url>
 	</scm>
 	<build>
 		<plugins>
