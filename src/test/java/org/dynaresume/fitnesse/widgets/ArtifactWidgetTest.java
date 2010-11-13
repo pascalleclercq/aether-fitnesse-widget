@@ -1,0 +1,61 @@
+package org.dynaresume.fitnesse.widgets;
+
+import junit.framework.TestCase;
+import fitnesse.wikitext.widgets.MockWidgetRoot;
+import fitnesse.wikitext.widgets.ParentWidget;
+
+public class ArtifactWidgetTest extends TestCase {
+
+	private ParentWidget parent;
+
+	@Override
+	protected void setUp() throws Exception {
+
+		parent = new MockWidgetRoot();
+
+	}
+
+	public void testJunit382() throws Exception {
+		// Very simple test : only 1 dependency resolved, jar is a dependency of
+		// the current module
+		ArtifactWidget artifactWidget = new ArtifactWidget(parent, "!artifact junit:junit:3.8.2");
+		String resolvedClassPath = artifactWidget.childHtml();
+		System.out.println(resolvedClassPath);
+
+		assertEquals(artifactWidget.getLocalRepo() + "/junit/junit/3.8.2/junit-3.8.2.jar", resolvedClassPath);
+
+	}
+
+	public void testJunit482() throws Exception {
+		// Very simple test : only 1 dependency resolved, jar is not a
+		// dependency of the current module
+		System.setProperty("REMOTE_REPO", "http://repo1.maven.org/maven2");
+		ArtifactWidget artifactWidget = new ArtifactWidget(parent, "!artifact junit:junit:4.8.2");
+		String resolvedClassPath = artifactWidget.childHtml();
+		System.out.println(resolvedClassPath);
+
+		assertEquals(artifactWidget.getLocalRepo() + "/junit/junit/4.8.2/junit-4.8.2.jar", resolvedClassPath);
+
+	}
+
+	public void testComplexDependency() throws Exception {
+		// Very simple test : only 1 dependency resolved, jar is not a
+		// dependency of the current module
+		System.setProperty("REMOTE_REPO", "http://repository.jboss.org/maven2/");
+		ArtifactWidget artifactWidget = new ArtifactWidget(parent, "!artifact org.hibernate:hibernate-core:3.3.0.CR1");
+		String resolvedClassPath = artifactWidget.childHtml();
+		System.out.println(resolvedClassPath);
+		assertEquals(
+				artifactWidget.getLocalRepo() + "/org/hibernate/hibernate-core/3.3.0.CR1/hibernate-core-3.3.0.CR1.jar:"
+						+ artifactWidget.getLocalRepo() + "/antlr/antlr/2.7.6/antlr-2.7.6.jar:" + artifactWidget.getLocalRepo()
+						+ "/commons-collections/commons-collections/3.1/commons-collections-3.1.jar:" + artifactWidget.getLocalRepo()
+						+ "/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:" + artifactWidget.getLocalRepo()
+						+ "/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:" + artifactWidget.getLocalRepo()
+						+ "/javax/transaction/jta/1.1/jta-1.1.jar:" + artifactWidget.getLocalRepo()
+						+ "/javassist/javassist/3.4.GA/javassist-3.4.GA.jar:" + artifactWidget.getLocalRepo()
+						+ "/cglib/cglib/2.1_3/cglib-2.1_3.jar:" + artifactWidget.getLocalRepo() + "/asm/asm/1.5.3/asm-1.5.3.jar:"
+						+ artifactWidget.getLocalRepo() + "/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar:" + artifactWidget.getLocalRepo()
+						+ "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar", resolvedClassPath);
+
+	}
+}

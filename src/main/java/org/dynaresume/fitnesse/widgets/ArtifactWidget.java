@@ -44,15 +44,15 @@ public class ArtifactWidget extends ClasspathWidget {
 		coords = findPomFile(matcher);
 	}
 
-	final String userHome = System.getProperty("user.home");
+	private static final String USER_HOME = System.getProperty("user.home");
 
-	final File userMavenConfigurationHome = new File(userHome, ".m2");
+	private static final File USER_MAVEN_CONFIGURATION_HOME = new File(USER_HOME, ".m2");
 
-	final File defaultUserLocalRepository = new File(userMavenConfigurationHome, "repository");
+	protected static final File DEFAULT_USER_LOCAL_REPOSITORY = new File(USER_MAVEN_CONFIGURATION_HOME, "repository");
 
 	@Override
 	public String childHtml() throws Exception {
-		
+
 		final Aether aether = new Aether(getRemoteRepo(), getLocalRepo());
 
 		final Artifact artifact = new DefaultArtifact(coords);
@@ -67,8 +67,12 @@ public class ArtifactWidget extends ClasspathWidget {
 
 	private String getLocalRepo() throws Exception {
 		String remoteRepo = getVariable("LOCAL_REPO");
-		if (remoteRepo == null)
-			remoteRepo = defaultUserLocalRepository.getAbsolutePath();
+		if (remoteRepo == null){
+			remoteRepo = DEFAULT_USER_LOCAL_REPOSITORY.getAbsolutePath();
+			addVariable("LOCAL_REPO", remoteRepo);
+		}
+			
+			
 		return remoteRepo;
 	}
 
