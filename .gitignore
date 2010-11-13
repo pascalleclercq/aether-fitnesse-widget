@@ -6,3 +6,5 @@ test-output
 temp-*
 /target
 /target
+/target
+/.settings
