@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>org.fitnesse</groupId>
 			<artifactId>fitnesse</artifactId>
-			<version>[0,]</version>
+			<version>20060719</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
