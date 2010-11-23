@@ -40,6 +40,8 @@ public class ArtifactWidget extends ClasspathWidget {
 
 	public ArtifactWidget(ParentWidget parent, String inputText) throws Exception {
 		super(parent, "");
+		
+		
 		Matcher matcher = pattern.matcher(inputText);
 		coords = findPomFile(matcher);
 	}
