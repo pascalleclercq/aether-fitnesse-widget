@@ -57,7 +57,7 @@ public class ArtifactWidget extends ClasspathWidget {
 	static {
 		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class });
 	}
-
+	public static final String REGEXP = "^!artifact [^\r\n]*";
 	private static final Pattern pattern = Pattern.compile("^!artifact (.*)");
 
 	private AetherResult result;
@@ -73,7 +73,7 @@ public class ArtifactWidget extends ClasspathWidget {
 		
 		
 		Matcher matcher = pattern.matcher(inputText);
-		coords = findPomFile(matcher);
+		coords = findCoordinate(matcher);
 	}
 
 	private static final String USER_HOME = System.getProperty("user.home");
@@ -108,7 +108,7 @@ public class ArtifactWidget extends ClasspathWidget {
 		return remoteRepo;
 	}
 
-	private String findPomFile(Matcher matcher) {
+	private String findCoordinate(Matcher matcher) {
 		if (matcher.find())
 			return matcher.group(1);
 		else
