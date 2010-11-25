@@ -26,18 +26,48 @@ import fitnesse.wikitext.WidgetBuilder;
 import fitnesse.wikitext.widgets.ClasspathWidget;
 import fitnesse.wikitext.widgets.ParentWidget;
 
+/**
+ * @author pascalleclercq
+ * 1. Grab aether-fitnesse-widget-<version>-jar-with-dependencies.jar from maven central repo or from GitHub.
+ * 2. Create/edit a file named "plugins.properties" in the FitNesse server root directory. This must contain: WikiWidgets=org.dynaresume.fitnesse.widgets.ArtifactWidget
+ * 3. Start FitNesse. this way : java -cp fitnesse.jar:aether-fitnesse-widget-<version>-jar-with-dependencies.jar fitnesseMain.FitNesseMain
+ * 4. You should be able to see :
+ *    FitNesse (v20101101) Started...
+ *       port:              8087
+ * 	  root page:         fitnesse.wiki.FileSystemPage at ./FitNesseRoot
+ * 	  logger:            none
+ * 	  authenticator:     fitnesse.authentication.PromiscuousAuthenticator
+ * 	  html page factory: fitnesse.html.HtmlPageFactory
+ * 	  page version expiration set to 14 days.
+ * 	  Custom wiki widgets loaded:
+ * 		org.dynaresume.fitnesse.widgets.ArtifactWidget
+ * 
+ * 5. Create a FitNesse page with a reference to a artifact :
+ * 
+ * !artifact groupId:artifactId:version
+ * 
+ * This will load your projects classpath into the page. 
+ * You can customize the place of the local repo by providing a value for "LOCAL_REPO" (eg : !define LOCAL_REPO {/Users/pascalleclercq/my_alternate_repo}).
+ * If not set, the maven's default value will be use : ${user.home}/.m2/repository.
+ * You can also define a remote repo where artifact can be downloaded if needed by providing a value for "REMOTE_REPO" (eg : !define REMOTE_REPO {http://mycompany:9080/nexus}).
+ *
+ */
 public class ArtifactWidget extends ClasspathWidget {
 
 	static {
 		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class });
 	}
 
-	public static final String REGEXP = "^!artifact [^\r\n]*";
 	private static final Pattern pattern = Pattern.compile("^!artifact (.*)");
 
 	private AetherResult result;
 	private String coords;
 
+	/**
+	 * @param parent
+	 * @param inputText
+	 * @throws Exception
+	 */
 	public ArtifactWidget(ParentWidget parent, String inputText) throws Exception {
 		super(parent, "");
 		
@@ -50,7 +80,7 @@ public class ArtifactWidget extends ClasspathWidget {
 
 	private static final File USER_MAVEN_CONFIGURATION_HOME = new File(USER_HOME, ".m2");
 
-	protected static final File DEFAULT_USER_LOCAL_REPOSITORY = new File(USER_MAVEN_CONFIGURATION_HOME, "repository");
+	private static final File DEFAULT_USER_LOCAL_REPOSITORY = new File(USER_MAVEN_CONFIGURATION_HOME, "repository");
 
 	@Override
 	public String childHtml() throws Exception {
@@ -78,7 +108,7 @@ public class ArtifactWidget extends ClasspathWidget {
 		return remoteRepo;
 	}
 
-	protected String findPomFile(Matcher matcher) {
+	private String findPomFile(Matcher matcher) {
 		if (matcher.find())
 			return matcher.group(1);
 		else
