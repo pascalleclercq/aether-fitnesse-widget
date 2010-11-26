@@ -5,7 +5,7 @@
 		<artifactId>oss-parent</artifactId>
 		<version>5</version>
 	</parent>
-	<groupId>org.dynaresume</groupId>
+	<groupId>com.github.pascalleclercq</groupId>
 	<artifactId>aether-fitnesse-widget</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0.2-SNAPSHOT</version>
