@@ -9,3 +9,5 @@ temp-*
 /target
 /.settings
 /target
+/.classpath
+/.project
