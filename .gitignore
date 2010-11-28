@@ -12,3 +12,7 @@ temp-*
 /.classpath
 /.project
 /.settings
+/.project
+/.classpath
+/target
+/.settings
