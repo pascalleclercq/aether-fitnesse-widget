@@ -27,30 +27,10 @@ import fitnesse.wikitext.widgets.ClasspathWidget;
 import fitnesse.wikitext.widgets.ParentWidget;
 
 /**
- * @author pascalleclercq
- * 1. Grab aether-fitnesse-widget-<version>-jar-with-dependencies.jar from maven central repo or from GitHub.
- * 2. Create/edit a file named "plugins.properties" in the FitNesse server root directory. This must contain: WikiWidgets=org.dynaresume.fitnesse.widgets.ArtifactWidget
- * 3. Start FitNesse. this way : java -cp fitnesse.jar:aether-fitnesse-widget-<version>-jar-with-dependencies.jar fitnesseMain.FitNesseMain
- * 4. You should be able to see :
- *    FitNesse (v20101101) Started...
- *       port:              8087
- * 	  root page:         fitnesse.wiki.FileSystemPage at ./FitNesseRoot
- * 	  logger:            none
- * 	  authenticator:     fitnesse.authentication.PromiscuousAuthenticator
- * 	  html page factory: fitnesse.html.HtmlPageFactory
- * 	  page version expiration set to 14 days.
- * 	  Custom wiki widgets loaded:
- * 		org.dynaresume.fitnesse.widgets.ArtifactWidget
+ * @author pascalleclercq 
+ * {@link https://github.com/pascalleclercq/aether-fitnesse-widget} for more installation instructions
+ * @see ClasspathWidget
  * 
- * 5. Create a FitNesse page with a reference to a artifact :
- * 
- * !artifact groupId:artifactId:version
- * 
- * This will load your projects classpath into the page. 
- * You can customize the place of the local repo by providing a value for "LOCAL_REPO" (eg : !define LOCAL_REPO {/Users/pascalleclercq/my_alternate_repo}).
- * If not set, the maven's default value will be use : ${user.home}/.m2/repository.
- * You can also define a remote repo where artifact can be downloaded if needed by providing a value for "REMOTE_REPO" (eg : !define REMOTE_REPO {http://mycompany:9080/nexus}).
- *
  */
 public class ArtifactWidget extends ClasspathWidget {
 
@@ -60,20 +40,20 @@ public class ArtifactWidget extends ClasspathWidget {
 	public static final String REGEXP = "^!artifact [^\r\n]*";
 	private static final Pattern pattern = Pattern.compile("^!artifact (.*)");
 
-	private AetherResult result;
 	private String coords;
 
 	/**
 	 * @param parent
 	 * @param inputText
+	 *            {@code !artifact <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>}
 	 * @throws Exception
 	 */
 	public ArtifactWidget(ParentWidget parent, String inputText) throws Exception {
 		super(parent, "");
-		
-		
+
 		Matcher matcher = pattern.matcher(inputText);
 		coords = findCoordinate(matcher);
+
 	}
 
 	private static final String USER_HOME = System.getProperty("user.home");
@@ -86,10 +66,15 @@ public class ArtifactWidget extends ClasspathWidget {
 	public String childHtml() throws Exception {
 
 		final Aether aether = new Aether(getRemoteRepo(), getLocalRepo());
+		try {
+			final Artifact artifact = new DefaultArtifact(coords);
+			AetherResult result = aether.resolve(artifact);
+			return result.getResolvedClassPath();
+		} catch (Exception e) {
 
-		final Artifact artifact = new DefaultArtifact(coords);
-		result = aether.resolve(artifact);
-		return result.getResolvedClassPath();
+			return e.getMessage() + "\n" + e.getCause() + " please check check that your artifiact is installed or is available in your LOCAL_REPO parameter";
+		}
+
 	}
 
 	private String getRemoteRepo() throws Exception {
@@ -99,13 +84,16 @@ public class ArtifactWidget extends ClasspathWidget {
 
 	private String getLocalRepo() throws Exception {
 		String remoteRepo = getVariable("LOCAL_REPO");
-		if (remoteRepo == null){
+		if (remoteRepo == null) {
 			remoteRepo = DEFAULT_USER_LOCAL_REPOSITORY.getAbsolutePath();
 			addVariable("LOCAL_REPO", remoteRepo);
 		}
-			
-			
+
 		return remoteRepo;
+	}
+
+	public String asWikiText() throws Exception {
+		return "!artifact " + coords;
 	}
 
 	private String findCoordinate(Matcher matcher) {

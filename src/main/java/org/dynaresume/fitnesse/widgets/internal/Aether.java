@@ -23,13 +23,10 @@ import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.collection.DependencyCollectionException;
 import org.sonatype.aether.connector.wagon.WagonProvider;
 import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
-import org.sonatype.aether.deployment.DeployRequest;
-import org.sonatype.aether.deployment.DeploymentException;
 import org.sonatype.aether.graph.Dependency;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.installation.InstallRequest;
 import org.sonatype.aether.installation.InstallationException;
-import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
@@ -136,21 +133,21 @@ public class Aether
         repositorySystem.install( session, installRequest );
     }
 
-    public void deploy( Artifact artifact, Artifact pom, String remoteRepository )
-        throws DeploymentException
-    {
-        RepositorySystemSession session = newSession();
-
-        RemoteRepository nexus = new RemoteRepository( "nexus", "default", remoteRepository );
-        Authentication authentication = new Authentication( "admin", "admin123" );
-        nexus.setAuthentication( authentication );
-
-        DeployRequest deployRequest = new DeployRequest();
-        deployRequest.addArtifact( artifact ).addArtifact( pom );        
-        deployRequest.setRepository( nexus );
-        
-        repositorySystem.deploy( session, deployRequest );
-    }
+//    public void deploy( Artifact artifact, Artifact pom, String remoteRepository )
+//        throws DeploymentException
+//    {
+//        RepositorySystemSession session = newSession();
+//
+//        RemoteRepository nexus = new RemoteRepository( "nexus", "default", remoteRepository );
+//        Authentication authentication = new Authentication( "admin", "admin123" );
+//        nexus.setAuthentication( authentication );
+//
+//        DeployRequest deployRequest = new DeployRequest();
+//        deployRequest.addArtifact( artifact ).addArtifact( pom );        
+//        deployRequest.setRepository( nexus );
+//        
+//        repositorySystem.deploy( session, deployRequest );
+//    }
 
     private void displayTree( DependencyNode node, String indent, StringBuffer sb )
     {
