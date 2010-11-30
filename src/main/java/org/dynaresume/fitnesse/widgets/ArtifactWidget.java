@@ -21,14 +21,16 @@ import org.dynaresume.fitnesse.widgets.internal.AetherResult;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 
+import fitnesse.html.HtmlUtil;
 import fitnesse.wiki.PageData;
 import fitnesse.wikitext.WidgetBuilder;
 import fitnesse.wikitext.widgets.ClasspathWidget;
+import fitnesse.wikitext.widgets.IncludeWidget;
 import fitnesse.wikitext.widgets.ParentWidget;
+import fitnesse.wikitext.widgets.VariableDefinitionWidget;
 
 /**
- * @author pascalleclercq 
- * {@link https://github.com/pascalleclercq/aether-fitnesse-widget} for more installation instructions
+ * @author pascalleclercq {@link https://github.com/pascalleclercq/aether-fitnesse-widget} for more installation instructions
  * @see ClasspathWidget
  * 
  */
@@ -37,6 +39,7 @@ public class ArtifactWidget extends ClasspathWidget {
 	static {
 		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class });
 	}
+
 	public static final String REGEXP = "^!artifact [^\r\n]*";
 	private static final Pattern pattern = Pattern.compile("^!artifact (.*)");
 
@@ -63,17 +66,22 @@ public class ArtifactWidget extends ClasspathWidget {
 	private static final File DEFAULT_USER_LOCAL_REPOSITORY = new File(USER_MAVEN_CONFIGURATION_HOME, "repository");
 
 	@Override
-	public String childHtml() throws Exception {
-
-		final Aether aether = new Aether(getRemoteRepo(), getLocalRepo());
+	public String render() throws Exception {
 		try {
-			final Artifact artifact = new DefaultArtifact(coords);
-			AetherResult result = aether.resolve(artifact);
-			return result.getResolvedClassPath();
+			return HtmlUtil.metaText("classpath: " + getText());
 		} catch (Exception e) {
-
+			e.printStackTrace();
 			return e.getMessage() + "\n" + e.getCause() + " please check check that your artifiact is installed or is available in your LOCAL_REPO parameter";
 		}
+
+	}
+
+	@Override
+	public String getText() throws Exception {
+		final Aether aether = new Aether(getRemoteRepo(), getLocalRepo());
+		final Artifact artifact = new DefaultArtifact(coords);
+		AetherResult result = aether.resolve(artifact);
+		return result.getResolvedClassPath();
 
 	}
 
@@ -83,13 +91,14 @@ public class ArtifactWidget extends ClasspathWidget {
 	}
 
 	private String getLocalRepo() throws Exception {
-		String remoteRepo = getVariable("LOCAL_REPO");
-		if (remoteRepo == null) {
-			remoteRepo = DEFAULT_USER_LOCAL_REPOSITORY.getAbsolutePath();
-			addVariable("LOCAL_REPO", remoteRepo);
+		//this is the only way to be sure variable will be initialized during "test"...
+		String localRepo = getWikiPage().getData().getVariable("LOCAL_REPO");
+		if (localRepo == null) {
+			localRepo = DEFAULT_USER_LOCAL_REPOSITORY.getAbsolutePath();
+			addVariable("LOCAL_REPO", localRepo);
 		}
 
-		return remoteRepo;
+		return localRepo;
 	}
 
 	public String asWikiText() throws Exception {

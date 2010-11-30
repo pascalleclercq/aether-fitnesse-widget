@@ -29,10 +29,13 @@ import org.sonatype.aether.installation.InstallRequest;
 import org.sonatype.aether.installation.InstallationException;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.repository.WorkspaceReader;
+import org.sonatype.aether.repository.WorkspaceRepository;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
 import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
+import org.sonatype.aether.util.repository.ChainedWorkspaceReader;
 
 public class Aether
 {
@@ -65,6 +68,7 @@ public class Aether
         MavenRepositorySystemSession session = new MavenRepositorySystemSession();
         
         session.setLocalRepositoryManager( repositorySystem.newLocalRepositoryManager( localRepository ) );
+       
         session.setTransferListener( new ConsoleTransferListener( System.out ) );
         session.setRepositoryListener( new ConsoleRepositoryListener( System.out ) );
         return session;
@@ -78,11 +82,12 @@ public class Aether
     
     Dependency dependency = new Dependency( artifact, "runtime" );
     RemoteRepository central = new RemoteRepository( "central", "default", remoteRepository );
-
+   
     CollectRequest collectRequest = new CollectRequest();
     collectRequest.setRoot( dependency );
+   // collectRequest.s
     collectRequest.addRepository( central );
-
+    
     DependencyNode rootNode = repositorySystem.collectDependencies( session, collectRequest ).getRoot();
 
     repositorySystem.resolveDependencies( session, rootNode, null );
