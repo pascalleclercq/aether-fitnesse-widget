@@ -25,9 +25,7 @@ import fitnesse.html.HtmlUtil;
 import fitnesse.wiki.PageData;
 import fitnesse.wikitext.WidgetBuilder;
 import fitnesse.wikitext.widgets.ClasspathWidget;
-import fitnesse.wikitext.widgets.IncludeWidget;
 import fitnesse.wikitext.widgets.ParentWidget;
-import fitnesse.wikitext.widgets.VariableDefinitionWidget;
 
 /**
  * @author pascalleclercq {@link https://github.com/pascalleclercq/aether-fitnesse-widget} for more installation instructions
@@ -95,7 +93,6 @@ public class ArtifactWidget extends ClasspathWidget {
 		String localRepo = getWikiPage().getData().getVariable("LOCAL_REPO");
 		if (localRepo == null) {
 			localRepo = DEFAULT_USER_LOCAL_REPOSITORY.getAbsolutePath();
-			addVariable("LOCAL_REPO", localRepo);
 		}
 
 		return localRepo;
