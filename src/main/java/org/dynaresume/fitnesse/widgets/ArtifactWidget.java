@@ -85,10 +85,10 @@ public class ArtifactWidget extends ClasspathWidget {
 
 	private String getRemoteRepo() throws Exception {
 
-		return getVariable("REMOTE_REPO");
+		return getWikiPage().getData().getVariable("REMOTE_REPO");
 	}
 
-	private String getLocalRepo() throws Exception {
+	public String getLocalRepo() throws Exception {
 		//this is the only way to be sure variable will be initialized during "test"...
 		String localRepo = getWikiPage().getData().getVariable("LOCAL_REPO");
 		if (localRepo == null) {

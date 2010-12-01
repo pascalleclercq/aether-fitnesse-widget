@@ -29,13 +29,10 @@ import org.sonatype.aether.installation.InstallRequest;
 import org.sonatype.aether.installation.InstallationException;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.repository.WorkspaceReader;
-import org.sonatype.aether.repository.WorkspaceRepository;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
 import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
-import org.sonatype.aether.util.repository.ChainedWorkspaceReader;
 
 public class Aether
 {
@@ -71,6 +68,7 @@ public class Aether
        
         session.setTransferListener( new ConsoleTransferListener( System.out ) );
         session.setRepositoryListener( new ConsoleRepositoryListener( System.out ) );
+        System.out.println("XXXXXXXXX "+session.getWorkspaceReader());
         return session;
     }
     
