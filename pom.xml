@@ -8,7 +8,7 @@
 	<groupId>org.dynaresume</groupId>
 	<artifactId>aether-fitnesse-widget</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.3</version>
 	<name>Maven FitNesse Widget</name>
 	<url>http://www.dynaresume.org</url>
 	<developers>
