@@ -68,7 +68,6 @@ public class Aether
        
         session.setTransferListener( new ConsoleTransferListener( System.out ) );
         session.setRepositoryListener( new ConsoleRepositoryListener( System.out ) );
-        System.out.println("XXXXXXXXX "+session.getWorkspaceReader());
         return session;
     }
     
