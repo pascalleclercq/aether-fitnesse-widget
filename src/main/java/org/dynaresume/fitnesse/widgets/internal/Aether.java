@@ -16,6 +16,7 @@ package org.dynaresume.fitnesse.widgets.internal;
 
 import org.apache.maven.repository.internal.DefaultServiceLocator;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.dynaresume.fitnesse.widgets.internal.eclipse.EclipseWorkspaceReader;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.artifact.Artifact;
@@ -63,9 +64,9 @@ public class Aether
     private RepositorySystemSession newSession()
     {
         MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-        
+        session.setWorkspaceReader(new EclipseWorkspaceReader());
         session.setLocalRepositoryManager( repositorySystem.newLocalRepositoryManager( localRepository ) );
-       
+      
         session.setTransferListener( new ConsoleTransferListener( System.out ) );
         session.setRepositoryListener( new ConsoleRepositoryListener( System.out ) );
         return session;
@@ -82,7 +83,7 @@ public class Aether
    
     CollectRequest collectRequest = new CollectRequest();
     collectRequest.setRoot( dependency );
-   // collectRequest.s
+  
     collectRequest.addRepository( central );
     
     DependencyNode rootNode = repositorySystem.collectDependencies( session, collectRequest ).getRoot();
@@ -94,8 +95,9 @@ public class Aether
 
     PreorderNodeListGenerator nlg = new PreorderNodeListGenerator();
     rootNode.accept( nlg );
-
-    return new AetherResult( rootNode, nlg.getFiles(), nlg.getClassPath() );
+    AetherResult aetherResult =new AetherResult( rootNode, nlg.getFiles(), nlg.getClassPath() );
+    System.out.println(aetherResult.getResolvedClassPath());
+    return aetherResult;
 }
     
     public AetherResult resolve( String groupId, String artifactId, String version )
@@ -110,6 +112,7 @@ public class Aether
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( dependency );
         collectRequest.addRepository( central );
+        
 
         DependencyNode rootNode = repositorySystem.collectDependencies( session, collectRequest ).getRoot();
 
