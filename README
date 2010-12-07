@@ -16,7 +16,7 @@ I'm looking for beta-tester !!! Don't hesitate to create issues, enhancement req
   3. Start FitNesse. this way : java -cp fitnesse.jar:aether-fitnesse-widget-<version>-jar-with-dependencies.jar fitnesseMain.FitNesseMain
   4. You should be able to see :
      FitNesse (v20101101) Started...
-        port:              8087
+        port:              80
   	  root page:         fitnesse.wiki.FileSystemPage at ./FitNesseRoot
   	  logger:            none
   	  authenticator:     fitnesse.authentication.PromiscuousAuthenticator
