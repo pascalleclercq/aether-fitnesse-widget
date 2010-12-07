@@ -1,4 +1,4 @@
-package org.dynaresume.fitnesse.widgets.internal;
+package fr.opensagres.fitnesse.widgets.internal;
 
 /*
  * Copyright (c) 2010 Sonatype, Inc. All rights reserved.

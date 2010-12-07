@@ -12,7 +12,7 @@ I'm looking for beta-tester !!! Don't hesitate to create issues, enhancement req
 == HOW-TO:
 
   1. Grab aether-fitnesse-widget-<version>-jar-with-dependencies.jar from maven central repo or from GitHub.
-  2. Create/edit a file named "plugins.properties" in the FitNesse server root directory. This must contain: WikiWidgets=org.dynaresume.fitnesse.widgets.ArtifactWidget
+  2. Create/edit a file named "plugins.properties" in the FitNesse server root directory. This must contain: WikiWidgets=fr.opensagres.fitnesse.widgets.ArtifactWidget
   3. Start FitNesse. this way : java -cp fitnesse.jar:aether-fitnesse-widget-<version>-jar-with-dependencies.jar fitnesseMain.FitNesseMain
   4. You should be able to see :
      FitNesse (v20101101) Started...
@@ -23,7 +23,7 @@ I'm looking for beta-tester !!! Don't hesitate to create issues, enhancement req
   	  html page factory: fitnesse.html.HtmlPageFactory
   	  page version expiration set to 14 days.
   	  Custom wiki widgets loaded:
-  		org.dynaresume.fitnesse.widgets.ArtifactWidget
+  		fr.opensagres.fitnesse.widgets.ArtifactWidget
   
   5. Create a FitNesse page with a reference to a artifact :
   

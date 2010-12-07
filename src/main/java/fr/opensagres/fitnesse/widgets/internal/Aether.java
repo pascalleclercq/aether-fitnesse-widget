@@ -1,4 +1,4 @@
-package org.dynaresume.fitnesse.widgets.internal;
+package fr.opensagres.fitnesse.widgets.internal;
 
 /*
  * Copyright (c) 2010 Sonatype, Inc. All rights reserved.
@@ -16,7 +16,6 @@ package org.dynaresume.fitnesse.widgets.internal;
 
 import org.apache.maven.repository.internal.DefaultServiceLocator;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
-import org.dynaresume.fitnesse.widgets.internal.eclipse.EclipseWorkspaceReader;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.artifact.Artifact;
@@ -34,6 +33,8 @@ import org.sonatype.aether.resolution.ArtifactResolutionException;
 import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
+
+import fr.opensagres.fitnesse.widgets.internal.eclipse.EclipseWorkspaceReader;
 
 public class Aether
 {

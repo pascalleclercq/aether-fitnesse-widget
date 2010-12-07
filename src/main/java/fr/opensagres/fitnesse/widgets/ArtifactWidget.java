@@ -10,14 +10,12 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.dynaresume.fitnesse.widgets;
+package fr.opensagres.fitnesse.widgets;
 
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.dynaresume.fitnesse.widgets.internal.Aether;
-import org.dynaresume.fitnesse.widgets.internal.AetherResult;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 
@@ -26,6 +24,8 @@ import fitnesse.wiki.PageData;
 import fitnesse.wikitext.WidgetBuilder;
 import fitnesse.wikitext.widgets.ClasspathWidget;
 import fitnesse.wikitext.widgets.ParentWidget;
+import fr.opensagres.fitnesse.widgets.internal.Aether;
+import fr.opensagres.fitnesse.widgets.internal.AetherResult;
 
 /**
  * @author pascalleclercq {@link https://github.com/pascalleclercq/aether-fitnesse-widget} for more installation instructions

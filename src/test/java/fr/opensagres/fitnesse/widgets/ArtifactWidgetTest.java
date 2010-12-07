@@ -1,4 +1,4 @@
-package org.dynaresume.fitnesse.widgets;
+package fr.opensagres.fitnesse.widgets;
 
 import java.io.File;
 import java.util.List;
@@ -10,6 +10,7 @@ import fitnesse.wiki.PageData;
 import fitnesse.wiki.PathParser;
 import fitnesse.wiki.WikiPage;
 import fitnesse.wikitext.WidgetBuilder;
+import fr.opensagres.fitnesse.widgets.ArtifactWidget;
 
 public class ArtifactWidgetTest extends TestCase {
 

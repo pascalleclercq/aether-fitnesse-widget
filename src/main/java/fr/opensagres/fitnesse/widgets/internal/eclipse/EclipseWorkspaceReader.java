@@ -1,4 +1,4 @@
-package org.dynaresume.fitnesse.widgets.internal.eclipse;
+package fr.opensagres.fitnesse.widgets.internal.eclipse;
 
 import java.io.File;
 import java.util.Collections;
