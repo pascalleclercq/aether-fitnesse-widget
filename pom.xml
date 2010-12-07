@@ -5,12 +5,12 @@
 		<artifactId>oss-parent</artifactId>
 		<version>5</version>
 	</parent>
-	<groupId>org.dynaresume</groupId>
+	<groupId>fr.opensagres</groupId>
 	<artifactId>aether-fitnesse-widget</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.5-SNAPSHOT</version>
-	<name>Maven FitNesse Widget</name>
-	<url>http://www.dynaresume.org</url>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>Aether FitNesse Widget</name>
+	<url>http://www.opensagres.fr</url>
 	<developers>
 		<developer>
 			<id>pascalleclercq</id>
