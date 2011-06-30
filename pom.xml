@@ -36,7 +36,7 @@
 		<url>git@github.com:pascalleclercq/aether-fitnesse-widget.git</url>
 	</scm>
 	<build>
-		<defaultGoal>clean test</defaultGoal>
+		<defaultGoal>install</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
