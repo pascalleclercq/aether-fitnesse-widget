@@ -1,25 +1,47 @@
 package fr.opensagres.fitnesse.widgets;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageCrawler;
 import fitnesse.wiki.PageData;
 import fitnesse.wiki.PathParser;
 import fitnesse.wiki.WikiPage;
 import fitnesse.wikitext.WidgetBuilder;
-import fr.opensagres.fitnesse.widgets.ArtifactWidget;
 
-public class ArtifactWidgetTest extends TestCase {
+public class ArtifactWidgetTest{
 
-	static {
+	
+
+	@BeforeClass
+	public static void initClasspathWidgetBuilder(){
 		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class });
 	}
-
 	private String repoDir = new File(ArtifactWidgetTest.class.getResource("/").getFile()).getParent() + "/repo";
+	@Test
+	public void testJunit382NoRemoteRepo() throws Exception {
+		// Very simple test : only 1 dependency resolved, jar is a dependency of
+		// the current module
 
+		WikiPage root = InMemoryPage.makeRoot("RooT");
+
+		PageCrawler crawler = root.getPageCrawler();
+
+		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"), "!define LOCAL_REPO {target/repo}\n!artifact junit:junit:3.8.2\n");
+
+		List<?> paths = page.getData().getClasspaths();
+
+		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
+
+	}
+	@Test
 	public void testJunit382() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
 		// the current module
@@ -35,7 +57,8 @@ public class ArtifactWidgetTest extends TestCase {
 		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
 
 	}
-
+	
+	@Test
 	public void testComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from http://repository.jboss.org/maven2/
 
@@ -44,9 +67,10 @@ public class ArtifactWidgetTest extends TestCase {
 		PageCrawler crawler = root.getPageCrawler();
 
 		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"),
-				"!define REMOTE_REPO {http://repository.jboss.org/maven2/}\n!define LOCAL_REPO {target/repo}\n!artifact org.hibernate:hibernate-core:3.3.0.CR1\n");
+				"!define REMOTE_REPO {http://repository.jboss.org/nexus/content/groups/public}\n!define LOCAL_REPO {target/repo}\n!artifact org.hibernate:hibernate-core:3.3.0.CR1\n");
 
 		List<?> paths = page.getData().getClasspaths();
+
 
 		assertEquals(repoDir + "/org/hibernate/hibernate-core/3.3.0.CR1/hibernate-core-3.3.0.CR1.jar:" + repoDir + "/antlr/antlr/2.7.6/antlr-2.7.6.jar:" + repoDir
 				+ "/commons-collections/commons-collections/3.1/commons-collections-3.1.jar:" + repoDir + "/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:" + repoDir

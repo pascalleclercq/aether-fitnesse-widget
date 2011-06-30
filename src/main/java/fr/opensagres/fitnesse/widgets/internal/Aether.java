@@ -14,131 +14,115 @@ package fr.opensagres.fitnesse.widgets.internal;
  */
 
 
-import org.apache.maven.repository.internal.DefaultServiceLocator;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.List;
+
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
-import org.sonatype.aether.collection.DependencyCollectionException;
-import org.sonatype.aether.connector.wagon.WagonProvider;
-import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
 import org.sonatype.aether.graph.Dependency;
 import org.sonatype.aether.graph.DependencyNode;
-import org.sonatype.aether.installation.InstallRequest;
-import org.sonatype.aether.installation.InstallationException;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
+import org.sonatype.aether.resolution.DependencyRequest;
+import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
-
-import fr.opensagres.fitnesse.widgets.internal.eclipse.EclipseWorkspaceReader;
 
 public class Aether
 {
-    private String remoteRepository;
+    private List<String> remoteRepositories;
+
     private RepositorySystem repositorySystem;
+
     private LocalRepository localRepository;
 
-    public Aether( String remoteRepository, String localRepository )
+    public Aether( List<String> remoteRepository, String localRepository )
     {
-        this.remoteRepository = remoteRepository;
-        this.repositorySystem = newManualSystem();
+        this.remoteRepositories = remoteRepository;
+        this.repositorySystem = Booter.newRepositorySystem();
         this.localRepository = new LocalRepository( localRepository );
-    }
-
-    //
-    // Setting up the repository system with the mechanism to find components
-    // and setting up the implementations to use. This would be much easier
-    // using Guice, but we want Aether to be easily embedded.
-    //
-    private RepositorySystem newManualSystem()
-    {
-        DefaultServiceLocator locator = new DefaultServiceLocator();
-        locator.setServices( WagonProvider.class, new ManualWagonProvider() );
-        locator.addService( RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class );
-        return locator.getService( RepositorySystem.class );
     }
 
     private RepositorySystemSession newSession()
     {
         MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-        session.setWorkspaceReader(new EclipseWorkspaceReader());
         session.setLocalRepositoryManager( repositorySystem.newLocalRepositoryManager( localRepository ) );
-      
-        session.setTransferListener( new ConsoleTransferListener( System.out ) );
-        session.setRepositoryListener( new ConsoleRepositoryListener( System.out ) );
+        session.setTransferListener( new ConsoleTransferListener() );
+        session.setRepositoryListener( new ConsoleRepositoryListener() );
         return session;
     }
-    
+
+//    public AetherResult resolve( String groupId, String artifactId, String version )
+//        throws DependencyResolutionException
+//    {
+//        RepositorySystemSession session = newSession();
+//        Dependency dependency =
+//            new Dependency( new DefaultArtifact( groupId, artifactId, "", "jar", version ), "runtime" );
+//        CollectRequest collectRequest = new CollectRequest();
+//        collectRequest.setRoot( dependency );
+//        for (String remoteRepository : remoteRepositories) {
+//        	collectRequest.addRepository( new RemoteRepository(null, "default", remoteRepository ) );
+//		}
+// 
+//
+//
+//
+//        
+//
+//        DependencyRequest dependencyRequest = new DependencyRequest();
+//        dependencyRequest.setCollectRequest( collectRequest );
+//
+//        DependencyNode rootNode = repositorySystem.resolveDependencies( session, dependencyRequest ).getRoot();
+//
+//        StringBuilder dump = new StringBuilder();
+//        displayTree( rootNode, dump );
+//
+//        PreorderNodeListGenerator nlg = new PreorderNodeListGenerator();
+//        rootNode.accept( nlg );
+//
+//        return new AetherResult( rootNode, nlg.getFiles(), nlg.getClassPath() );
+//    }
+//    
     public AetherResult resolve( Artifact artifact )
-    throws DependencyCollectionException, ArtifactResolutionException
-{
-    RepositorySystemSession session = newSession();
-    
-    
-    Dependency dependency = new Dependency( artifact, "runtime" );
-    RemoteRepository central = new RemoteRepository( "central", "default", remoteRepository );
-   
-    CollectRequest collectRequest = new CollectRequest();
-    collectRequest.setRoot( dependency );
-  
-    collectRequest.addRepository( central );
-    
-    DependencyNode rootNode = repositorySystem.collectDependencies( session, collectRequest ).getRoot();
-
-    repositorySystem.resolveDependencies( session, rootNode, null );
-
-    StringBuffer dump = new StringBuffer();
-    displayTree( rootNode, "", dump );
-
-    PreorderNodeListGenerator nlg = new PreorderNodeListGenerator();
-    rootNode.accept( nlg );
-    AetherResult aetherResult =new AetherResult( rootNode, nlg.getFiles(), nlg.getClassPath() );
-    System.out.println(aetherResult.getResolvedClassPath());
-    return aetherResult;
-}
-    
-    public AetherResult resolve( String groupId, String artifactId, String version )
-        throws DependencyCollectionException, ArtifactResolutionException
-    {
-        RepositorySystemSession session = newSession();
+            throws DependencyResolutionException
+        {
+            RepositorySystemSession session = newSession();
+            Dependency dependency =
+                new Dependency( artifact, "runtime" );
+            CollectRequest collectRequest = new CollectRequest();
+            collectRequest.setRoot( dependency );
+            for (String remoteRepository : remoteRepositories) {
+            	collectRequest.addRepository( new RemoteRepository(null, "default", remoteRepository ) );
+    		}
         
-        
-        Dependency dependency = new Dependency( new DefaultArtifact( groupId, artifactId, "", "jar", version ), "runtime" );
-        RemoteRepository central = new RemoteRepository( "central", "default", remoteRepository );
+            DependencyRequest dependencyRequest = new DependencyRequest();
+            dependencyRequest.setCollectRequest( collectRequest );
 
-        CollectRequest collectRequest = new CollectRequest();
-        collectRequest.setRoot( dependency );
-        collectRequest.addRepository( central );
-        
+            DependencyNode rootNode = repositorySystem.resolveDependencies( session, dependencyRequest ).getRoot();
 
-        DependencyNode rootNode = repositorySystem.collectDependencies( session, collectRequest ).getRoot();
+            StringBuilder dump = new StringBuilder();
+            displayTree( rootNode, dump );
 
-        repositorySystem.resolveDependencies( session, rootNode, null );
+            PreorderNodeListGenerator nlg = new PreorderNodeListGenerator();
+            rootNode.accept( nlg );
 
-        StringBuffer dump = new StringBuffer();
-        displayTree( rootNode, "", dump );
+            return new AetherResult( rootNode, nlg.getFiles(), nlg.getClassPath() );
+        }
 
-        PreorderNodeListGenerator nlg = new PreorderNodeListGenerator();
-        rootNode.accept( nlg );
-
-        return new AetherResult( rootNode, nlg.getFiles(), nlg.getClassPath() );
-    }
-
-    public void install( Artifact artifact, Artifact pom )
-        throws InstallationException
-    {
-        RepositorySystemSession session = newSession();
-
-        InstallRequest installRequest = new InstallRequest();
-        installRequest.addArtifact( artifact ).addArtifact( pom );
-        
-        repositorySystem.install( session, installRequest );
-    }
-
+//    public void install( Artifact artifact, Artifact pom )
+//        throws InstallationException
+//    {
+//        RepositorySystemSession session = newSession();
+//
+//        InstallRequest installRequest = new InstallRequest();
+//        installRequest.addArtifact( artifact ).addArtifact( pom );
+//
+//        repositorySystem.install( session, installRequest );
+//    }
+//
 //    public void deploy( Artifact artifact, Artifact pom, String remoteRepository )
 //        throws DeploymentException
 //    {
@@ -149,20 +133,17 @@ public class Aether
 //        nexus.setAuthentication( authentication );
 //
 //        DeployRequest deployRequest = new DeployRequest();
-//        deployRequest.addArtifact( artifact ).addArtifact( pom );        
+//        deployRequest.addArtifact( artifact ).addArtifact( pom );
 //        deployRequest.setRepository( nexus );
-//        
+//
 //        repositorySystem.deploy( session, deployRequest );
 //    }
-
-    private void displayTree( DependencyNode node, String indent, StringBuffer sb )
+//
+    private void displayTree( DependencyNode node, StringBuilder sb )
     {
-        sb.append( indent + node.getDependency() ).append( "\n" );
-        indent += "  ";
-        for ( DependencyNode child : node.getChildren() )
-        {
-            displayTree( child, indent, sb );
-        }
+        ByteArrayOutputStream os = new ByteArrayOutputStream( 1024 );
+        node.accept( new ConsoleDependencyGraphDumper( new PrintStream( os ) ) );
+        sb.append( os.toString() );
     }
 
 }

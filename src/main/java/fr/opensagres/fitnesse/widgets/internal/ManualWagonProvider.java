@@ -14,31 +14,29 @@ package fr.opensagres.fitnesse.widgets.internal;
  */
 
 import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.providers.file.FileWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
 import org.sonatype.aether.connector.wagon.WagonProvider;
 
+/**
+ * A simplistic provider for wagon instances when no Plexus-compatible IoC container is used.
+ */
 public class ManualWagonProvider
-    implements WagonProvider
+implements WagonProvider
 {
 
-    public Wagon lookup( String roleHint )
-        throws Exception
+public Wagon lookup( String roleHint )
+    throws Exception
+{
+    if ( "http".equals( roleHint ) )
     {
-        if ( "file".equals( roleHint ) )
-        {
-            return new FileWagon();
-        }
-        else if ( "http".equals( roleHint ) )
-        {
-            return new LightweightHttpWagon();
-        }
-        return null;
+        return new LightweightHttpWagon();
     }
+    return null;
+}
 
-    public void release( Wagon wagon )
-    {
+public void release( Wagon wagon )
+{
 
-    }
+}
 
 }

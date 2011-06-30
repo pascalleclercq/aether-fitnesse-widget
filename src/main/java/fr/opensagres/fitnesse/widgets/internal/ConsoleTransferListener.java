@@ -1,17 +1,12 @@
 package fr.opensagres.fitnesse.widgets.internal;
 
-/*
- * Copyright (c) 2010 Sonatype, Inc. All rights reserved.
- *
- * This program is licensed to you under the Apache License Version 2.0, 
- * and you may not use this file except in compliance with the Apache License Version 2.0. 
- * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, 
- * software distributed under the Apache License Version 2.0 is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
- */
+/*******************************************************************************
+ * Copyright (c) 2010-2011 Sonatype, Inc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ *   http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
@@ -20,10 +15,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.sonatype.aether.transfer.AbstractTransferListener;
 import org.sonatype.aether.transfer.TransferEvent;
 import org.sonatype.aether.transfer.TransferResource;
-import org.sonatype.aether.util.listener.AbstractTransferListener;
 
+/**
+ * A simplistic transfer listener that logs uploads/downloads to the console.
+ */
 public class ConsoleTransferListener
     extends AbstractTransferListener
 {
@@ -33,6 +31,11 @@ public class ConsoleTransferListener
     private Map<TransferResource, Long> downloads = new ConcurrentHashMap<TransferResource, Long>();
 
     private int lastLength;
+
+    public ConsoleTransferListener()
+    {
+        this( null );
+    }
 
     public ConsoleTransferListener( PrintStream out )
     {
