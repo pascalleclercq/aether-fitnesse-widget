@@ -15,7 +15,6 @@ package fr.opensagres.fitnesse.widgets;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,9 +32,8 @@ import fr.opensagres.fitnesse.widgets.internal.Aether;
 import fr.opensagres.fitnesse.widgets.internal.AetherResult;
 
 /**
- * @author pascalleclercq {@link https
- *         ://github.com/pascalleclercq/aether-fitnesse-widget} for more
- *         installation instructions
+ * @author pascalleclercq
+ * {@link http://github.com/pascalleclercq/aether-fitnesse-widget} for installation instructions 
  * @see ClasspathWidget
  * 
  */
