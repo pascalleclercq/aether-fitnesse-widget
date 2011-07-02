@@ -98,20 +98,7 @@ public class ArtifactWidgetTest {
 
 		List<String> paths = page.getData().getClasspaths();
 		System.out.println(paths);
-		//
-		// assertEquals(repoDir +
-		// "/org/hibernate/hibernate-core/3.3.0.CR1/hibernate-core-3.3.0.CR1.jar:"
-		// + repoDir + "/antlr/antlr/2.7.6/antlr-2.7.6.jar:" + repoDir
-		// +
-		// "/commons-collections/commons-collections/3.1/commons-collections-3.1.jar:"
-		// + repoDir + "/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:" + repoDir
-		// + "/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:" + repoDir +
-		// "/javax/transaction/jta/1.1/jta-1.1.jar:" + repoDir +
-		// "/javassist/javassist/3.4.GA/javassist-3.4.GA.jar:" + repoDir
-		// + "/cglib/cglib/2.1_3/cglib-2.1_3.jar:" + repoDir +
-		// "/asm/asm/1.5.3/asm-1.5.3.jar:" + repoDir +
-		// "/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar:" + repoDir
-		// + "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar", paths.get(0));
+		
 
 	}
 
@@ -119,8 +106,7 @@ public class ArtifactWidgetTest {
 	@Test
 	public void testSpring() throws Exception {
 		// Complex test : Full tree resolved from
-		// http://repository.jboss.org/maven2/
-
+		//issue with com.bea.wlplatform:commonj-twm:1.1
 		WikiPage root = InMemoryPage.makeRoot("RooT");
 
 		PageCrawler crawler = root.getPageCrawler();
@@ -131,20 +117,7 @@ public class ArtifactWidgetTest {
 
 		List<String> paths = page.getData().getClasspaths();
 		System.out.println(paths);
-		//
-		// assertEquals(repoDir +
-		// "/org/hibernate/hibernate-core/3.3.0.CR1/hibernate-core-3.3.0.CR1.jar:"
-		// + repoDir + "/antlr/antlr/2.7.6/antlr-2.7.6.jar:" + repoDir
-		// +
-		// "/commons-collections/commons-collections/3.1/commons-collections-3.1.jar:"
-		// + repoDir + "/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:" + repoDir
-		// + "/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:" + repoDir +
-		// "/javax/transaction/jta/1.1/jta-1.1.jar:" + repoDir +
-		// "/javassist/javassist/3.4.GA/javassist-3.4.GA.jar:" + repoDir
-		// + "/cglib/cglib/2.1_3/cglib-2.1_3.jar:" + repoDir +
-		// "/asm/asm/1.5.3/asm-1.5.3.jar:" + repoDir +
-		// "/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar:" + repoDir
-		// + "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar", paths.get(0));
+	
 
 	}
 }
