@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.List;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sonatype.aether.resolution.ArtifactResult;
 import org.sonatype.aether.resolution.DependencyResolutionException;
@@ -114,7 +115,7 @@ public class ArtifactWidgetTest {
 	 * 
 	 * @throws Exception
 	 */
-	
+	@Ignore("This test is time consuming and not very usefull on Jenkins...") 
 	@Test(expected = DependencyResolutionException.class)
 	public void testSpring() throws Exception {
 		// Complex test : Full tree resolved from
