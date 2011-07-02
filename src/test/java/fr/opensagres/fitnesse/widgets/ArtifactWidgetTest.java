@@ -102,7 +102,6 @@ public class ArtifactWidgetTest {
 
 	}
 
-	@Ignore
 	@Test
 	public void testSpring() throws Exception {
 		// Complex test : Full tree resolved from
@@ -112,8 +111,8 @@ public class ArtifactWidgetTest {
 		PageCrawler crawler = root.getPageCrawler();
 		// http://repository.jboss.org/nexus/content/groups/public
 		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"),
-
-		"!define REMOTE_REPO {http://maven.springframework.org/milestone}\n!define LOCAL_REPO {target/repo}\n!artifact org.springframework:spring:2.5.6.SEC02\n");
+//
+		"!define REMOTE_REPO {http://repository.jboss.org/nexus/content/groups/public-jboss/}\n!define LOCAL_REPO {target/repo}\n!artifact org.springframework:spring:2.5.6.SEC02\n");
 
 		List<String> paths = page.getData().getClasspaths();
 		System.out.println(paths);

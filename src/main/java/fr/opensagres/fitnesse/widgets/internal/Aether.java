@@ -24,6 +24,7 @@ import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.graph.Dependency;
+import org.sonatype.aether.graph.DependencyFilter;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
@@ -100,7 +101,14 @@ public class Aether
         
             DependencyRequest dependencyRequest = new DependencyRequest();
             dependencyRequest.setCollectRequest( collectRequest );
-
+            dependencyRequest.setFilter(new DependencyFilter() {
+				
+				@Override
+				public boolean accept(DependencyNode node, List<DependencyNode> parents) {
+					//return node.getDependency().getArtifact().getFile()!=null;
+					return !node.getDependency().isOptional();
+				}
+			});
             DependencyNode rootNode = repositorySystem.resolveDependencies( session, dependencyRequest ).getRoot();
 
             StringBuilder dump = new StringBuilder();
