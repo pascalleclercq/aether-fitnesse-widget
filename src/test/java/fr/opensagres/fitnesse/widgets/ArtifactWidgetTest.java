@@ -103,7 +103,7 @@ public class ArtifactWidgetTest {
 		System.out.println(paths);
 		assertEquals(repoDir + "/org/springframework/spring-core/3.0.0.RC1/spring-core-3.0.0.RC1.jar:" + repoDir
 				+ "/org/springframework/spring-asm/3.0.0.RC1/spring-asm-3.0.0.RC1.jar:" + repoDir + "/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar:" + repoDir
-				+ "/org/jboss/logging/com.springsource.org.jboss.logging/2.0.5.GA/com.springsource.org.jboss.logging-2.0.5.GA.jar"
+				+ "/org/jboss/logging/com.springsource.org.jboss.logging/2.0.5.GA/com.springsource.org.jboss.logging-2.0.5.GA.jar:"
 
 				+ repoDir + "/org/jboss/util/com.springsource.org.jboss.util/2.2.9.GA/com.springsource.org.jboss.util-2.2.9.GA.jar", paths.get(0));
 	}
