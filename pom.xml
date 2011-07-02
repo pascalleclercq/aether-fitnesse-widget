@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>5</version>
+		<version>7</version>
 	</parent>
 	<groupId>fr.opensagres</groupId>
 	<artifactId>aether-fitnesse-widget</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<name>Aether FitNesse Widget</name>
 	<url>http://www.opensagres.fr</url>
 	<developers>
