@@ -31,6 +31,10 @@ public Wagon lookup( String roleHint )
     {
         return new LightweightHttpWagon();
     }
+    if ( "https".equals( roleHint ) )
+    {
+        return new LightweightHttpWagon();
+    }
     return null;
 }
 

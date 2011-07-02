@@ -96,7 +96,7 @@ public class Aether
             CollectRequest collectRequest = new CollectRequest();
             collectRequest.setRoot( dependency );
             for (String remoteRepository : remoteRepositories) {
-            	collectRequest.addRepository( new RemoteRepository(null, "default", remoteRepository ) );
+            	collectRequest.addRepository( new RemoteRepository(remoteRepository, "default", remoteRepository ) );
     		}
         
             DependencyRequest dependencyRequest = new DependencyRequest();
@@ -105,8 +105,9 @@ public class Aether
 				
 				@Override
 				public boolean accept(DependencyNode node, List<DependencyNode> parents) {
-					//return node.getDependency().getArtifact().getFile()!=null;
-					return !node.getDependency().isOptional();
+					//no test dependencies
+					//no optional dependencies
+					return !node.getDependency().getScope().equals("test") && !node.getDependency().isOptional();
 				}
 			});
             DependencyNode rootNode = repositorySystem.resolveDependencies( session, dependencyRequest ).getRoot();

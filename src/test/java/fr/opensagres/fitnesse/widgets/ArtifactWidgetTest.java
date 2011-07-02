@@ -1,13 +1,17 @@
 package fr.opensagres.fitnesse.widgets;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.List;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.sonatype.aether.resolution.ArtifactResult;
+import org.sonatype.aether.resolution.DependencyResolutionException;
+import org.sonatype.aether.resolution.DependencyResult;
+import org.sonatype.aether.transfer.ArtifactTransferException;
 
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageCrawler;
@@ -63,7 +67,7 @@ public class ArtifactWidgetTest {
 	@Test
 	public void testComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from
-		// http://repository.jboss.org/maven2/
+		// http://repository.jboss.org/nexus/content/groups/public
 
 		WikiPage root = InMemoryPage.makeRoot("RooT");
 
@@ -77,9 +81,8 @@ public class ArtifactWidgetTest {
 
 		assertEquals(repoDir + "/org/hibernate/hibernate-core/3.3.0.CR1/hibernate-core-3.3.0.CR1.jar:" + repoDir + "/antlr/antlr/2.7.6/antlr-2.7.6.jar:" + repoDir
 				+ "/commons-collections/commons-collections/3.1/commons-collections-3.1.jar:" + repoDir + "/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:" + repoDir
-				+ "/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:" + repoDir + "/javax/transaction/jta/1.1/jta-1.1.jar:" + repoDir
-				+ "/javassist/javassist/3.4.GA/javassist-3.4.GA.jar:" + repoDir + "/cglib/cglib/2.1_3/cglib-2.1_3.jar:" + repoDir + "/asm/asm/1.5.3/asm-1.5.3.jar:" + repoDir
-				+ "/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar:" + repoDir + "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar", paths.get(0));
+				+ "/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:" + repoDir + "/javax/transaction/jta/1.1/jta-1.1.jar:" + repoDir + "/asm/asm/1.5.3/asm-1.5.3.jar:" + repoDir
+				+ "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar", paths.get(0));
 
 	}
 
@@ -98,25 +101,77 @@ public class ArtifactWidgetTest {
 
 		List<String> paths = page.getData().getClasspaths();
 		System.out.println(paths);
-		
+		assertEquals(repoDir + "/org/springframework/spring-core/3.0.0.RC1/spring-core-3.0.0.RC1.jar:" + repoDir
+				+ "/org/springframework/spring-asm/3.0.0.RC1/spring-asm-3.0.0.RC1.jar:" + repoDir + "/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar:" + repoDir
+				+ "/org/jboss/logging/com.springsource.org.jboss.logging/2.0.5.GA/com.springsource.org.jboss.logging-2.0.5.GA.jar"
 
+				+ repoDir + "/org/jboss/util/com.springsource.org.jboss.util/2.2.9.GA/com.springsource.org.jboss.util-2.2.9.GA.jar", paths.get(0));
 	}
 
-	@Test
+	/**
+	 * com.sun.jdmk:jmxtools:jar:1.2.1 com.sun.jmx:jmxri:jar:1.2.1 are not
+	 * available on any repo : Too bad...
+	 * 
+	 * @throws Exception
+	 */
+	
+	@Test(expected = DependencyResolutionException.class)
 	public void testSpring() throws Exception {
 		// Complex test : Full tree resolved from
-		//issue with com.bea.wlplatform:commonj-twm:1.1
-		WikiPage root = InMemoryPage.makeRoot("RooT");
 
-		PageCrawler crawler = root.getPageCrawler();
-		// http://repository.jboss.org/nexus/content/groups/public
-		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"),
-//
-		"!define REMOTE_REPO {http://repository.jboss.org/nexus/content/groups/public-jboss/}\n!define LOCAL_REPO {target/repo}\n!artifact org.springframework:spring:2.5.6.SEC02\n");
+		try {
 
-		List<String> paths = page.getData().getClasspaths();
-		System.out.println(paths);
-	
+			WikiPage root = InMemoryPage.makeRoot("RooT");
+
+			PageCrawler crawler = root.getPageCrawler();
+			// http://repository.springsource.com/maven/bundles/external;
+			WikiPage page = crawler
+					.addPage(root,
+							PathParser.parse("ClassPath"),
+							"!define REMOTE_REPO {http://oss.sonatype.org/content/repositories/JBoss/;https://oss.sonatype.org/content/repositories/appfuse-releases/}\n!define LOCAL_REPO {target/repo}\n!artifact org.springframework:spring:2.5.6.SEC02\n");
+
+			List<String> paths = page.getData().getClasspaths();
+			System.out.println(paths);
+
+		} catch (DependencyResolutionException e) {
+			DependencyResult res = e.getResult();
+
+			// System.out.println(res.getCollectExceptions());
+			List<ArtifactResult> results = res.getArtifactResults();
+			for (ArtifactResult artifactResult : results) {
+
+				if (!artifactResult.getExceptions().isEmpty()) {
+
+					List<Exception> ee = artifactResult.getExceptions();
+
+					for (Exception exception : ee) {
+						System.err.println(exception);
+						assertTrue(exception instanceof ArtifactTransferException);
+						ArtifactTransferException artifactNotFoundException = (ArtifactTransferException) exception;
+						System.out.println(artifactNotFoundException.getArtifact());
+//XXX It's difficult to create assertion here....
+						// System.out.println(artifactNotFoundException.getArtifact().getGroupId());
+						// "com.sun.jdmk" or ""com.sun.jmx"
+						// if
+						// (!"org.springframework".equals(artifactNotFoundException.getArtifact().getGroupId()))
+						// {
+						// assertEquals("com.sun.j",
+						// artifactNotFoundException.getArtifact().getGroupId().substring(0,
+						// 9));
+						// }
+						//
+						// else {
+						// assertEquals("spring",
+						// artifactNotFoundException.getArtifact().getArtifactId());
+						// }
+					}
+
+				}
+
+			}
+
+			throw e;
+		}
 
 	}
 }
