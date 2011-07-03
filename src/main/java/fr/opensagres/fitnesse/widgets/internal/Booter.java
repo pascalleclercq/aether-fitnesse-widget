@@ -7,10 +7,7 @@ package fr.opensagres.fitnesse.widgets.internal;
  *   http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.repository.LocalRepository;
 
 /**
  * A helper to boot the repository system and a repository system session.
@@ -22,21 +19,22 @@ public class Booter
     {
         return ManualRepositorySystemFactory.newRepositorySystem();
     }
-
-    public static RepositorySystemSession newRepositorySystemSession( RepositorySystem system )
-    {
-        MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-
-        LocalRepository localRepo = new LocalRepository( "target/local-repo" );
-        session.setLocalRepositoryManager( system.newLocalRepositoryManager( localRepo ) );
-
-        session.setTransferListener( new ConsoleTransferListener() );
-        session.setRepositoryListener( new ConsoleRepositoryListener() );
-
-        // uncomment to generate dirty trees
-        // session.setDependencyGraphTransformer( null );
-
-        return session;
-    }
+//
+//    public static RepositorySystemSession newRepositorySystemSession( RepositorySystem system )
+//    {
+//        MavenRepositorySystemSession session = new MavenRepositorySystemSession();
+//
+//        LocalRepository localRepo = new LocalRepository( "target/local-repo" );
+//        session.setLocalRepositoryManager( system.newLocalRepositoryManager( localRepo ) );
+//
+//        session.setTransferListener( new ConsoleTransferListener() );
+//        session.setRepositoryListener( new ConsoleRepositoryListener() );
+//
+//        // uncomment to generate dirty trees
+//        // session.setDependencyGraphTransformer( null );
+//
+//        session.setWorkspaceReader(new EclipseWorkspaceReader());
+//        return session;
+//    }
 
 }
