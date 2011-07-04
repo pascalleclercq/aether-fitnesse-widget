@@ -29,6 +29,7 @@ import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.DependencyRequest;
+import org.sonatype.aether.util.artifact.JavaScopes;
 import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
 
 import fr.opensagres.fitnesse.widgets.internal.eclipse.EclipseWorkspaceReader;
@@ -91,7 +92,7 @@ public class Aether {
 			public boolean accept(DependencyNode node, List<DependencyNode> parents) {
 				// no test dependencies
 				// no optional dependencies
-				return !node.getDependency().getScope().equals("test") && !node.getDependency().isOptional();
+				return !node.getDependency().getScope().equals(JavaScopes.TEST) && !node.getDependency().isOptional();
 			}
 		});
 		DependencyNode rootNode = repositorySystem.resolveDependencies(session, dependencyRequest).getRoot();
