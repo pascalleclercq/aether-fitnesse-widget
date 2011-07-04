@@ -15,6 +15,7 @@ package fr.opensagres.fitnesse.widgets.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.URI;
 import java.util.List;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
@@ -28,7 +29,6 @@ import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.DependencyRequest;
-import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
 
 import fr.opensagres.fitnesse.widgets.internal.eclipse.EclipseWorkspaceReader;
@@ -36,37 +36,54 @@ import fr.opensagres.fitnesse.widgets.internal.eclipse.EclipseWorkspaceReader;
 public class Aether {
 	private List<String> remoteRepositories;
 
-	private RepositorySystem repositorySystem;
+	protected RepositorySystem repositorySystem;
 
 	private LocalRepository localRepository;
 
-	public Aether(List<String> remoteRepository, String localRepository) {
-		this.remoteRepositories = remoteRepository;
+	public Aether() {
+		
+
 		this.repositorySystem = Booter.newRepositorySystem();
+		
+	}
+
+	
+	public void setRemoteRepositories(List<String> remoteRepositories) {
+		this.remoteRepositories = remoteRepositories;
+	}
+
+
+	public void setLocalRepository(String localRepository) {
 		this.localRepository = new LocalRepository(localRepository);
 	}
 
-	private RepositorySystemSession newSession() {
+
+	protected  RepositorySystemSession newSession() throws Exception {
 		MavenRepositorySystemSession session = new MavenRepositorySystemSession();
 		session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(localRepository));
 		session.setTransferListener(new ConsoleTransferListener());
 		session.setRepositoryListener(new ConsoleRepositoryListener());
-
 		session.setWorkspaceReader(new EclipseWorkspaceReader());
 
 		return session;
 	}
 
-	public AetherResult resolve(Artifact artifact) throws DependencyResolutionException {
+	public AetherResult resolve(Artifact artifact) throws Exception {
 		RepositorySystemSession session = newSession();
 		Dependency dependency = new Dependency(artifact, "runtime");
 		CollectRequest collectRequest = new CollectRequest();
 		collectRequest.setRoot(dependency);
 		for (String remoteRepository : remoteRepositories) {
-			collectRequest.addRepository(new RemoteRepository(remoteRepository, "default", remoteRepository));
+			  URI uri = URI.create(remoteRepository);
+			  if (uri != null) {
+                  collectRequest.addRepository(new RemoteRepository(uri.getHost() + "/" + uri.getRawPath(),
+                          "default", remoteRepository));
+              }
 		}
+		collectRequest.addRepository(new RemoteRepository("central", "default", "http://repo1.maven.org/maven2"));
 
 		DependencyRequest dependencyRequest = new DependencyRequest();
+
 		dependencyRequest.setCollectRequest(collectRequest);
 		dependencyRequest.setFilter(new DependencyFilter() {
 
@@ -93,5 +110,4 @@ public class Aether {
 		node.accept(new ConsoleDependencyGraphDumper(new PrintStream(os)));
 		sb.append(os.toString());
 	}
-
 }

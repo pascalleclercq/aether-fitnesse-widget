@@ -32,6 +32,7 @@ public class ManualRepositorySystemFactory
         locator.addService( RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class );
         locator.setServices( WagonProvider.class, new ManualWagonProvider() );
 
+        
         return locator.getService( RepositorySystem.class );
     }
 

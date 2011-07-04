@@ -29,6 +29,7 @@ import fitnesse.wikitext.widgets.ClasspathWidget;
 import fitnesse.wikitext.widgets.ParentWidget;
 import fr.opensagres.fitnesse.widgets.internal.Aether;
 import fr.opensagres.fitnesse.widgets.internal.AetherResult;
+import fr.opensagres.fitnesse.widgets.internal.MavenBasedAether;
 
 /**
  * @author pascalleclercq 
@@ -81,7 +82,16 @@ public class ArtifactWidget extends ClasspathWidget {
 
 	@Override
 	public String getText() throws Exception {
-		final Aether aether = new Aether(getRemoteRepo(), getLocalRepo());
+		 Aether aether =null;
+		if(isUseSettingsXml()){
+			aether = new MavenBasedAether();
+			
+		} else {
+			aether = new Aether();
+			aether.setLocalRepository(getLocalRepo());
+			aether.setRemoteRepositories(getRemoteRepo());
+		}
+		  
 		final Artifact artifact = new DefaultArtifact(coords);
 
 		AetherResult result = aether.resolve(artifact);
@@ -89,6 +99,13 @@ public class ArtifactWidget extends ClasspathWidget {
 
 	}
 
+	private boolean isUseSettingsXml() throws Exception{
+		
+		String useSettingsXmlStr = getWikiPage().getData().getVariable("USE_SETTINGS_XML");
+		
+		
+		return Boolean.parseBoolean(useSettingsXmlStr);
+	}
 	private List<String> getRemoteRepo() throws Exception {
 		List<String> result = new ArrayList<String>();
 
@@ -100,8 +117,7 @@ public class ArtifactWidget extends ClasspathWidget {
 			}
 
 		}
-		// add the default repo in any case...
-		result.add("http://repo1.maven.org/maven2/");
+		
 		return result;
 
 	}
