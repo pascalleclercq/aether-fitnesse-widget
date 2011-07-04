@@ -86,7 +86,7 @@ public class ArtifactWidgetTest {
 				+ "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar", paths.get(0));
 
 	}
-
+	@Ignore
 	@Test
 	public void testMoreComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from
