@@ -1,29 +1,26 @@
 package fr.opensagres.fitnesse.widgets.internal;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Proxy;
-import org.apache.maven.settings.RuntimeInfo;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuilder;
-import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.collection.DependencyGraphTransformer;
 import org.sonatype.aether.collection.DependencyManager;
 import org.sonatype.aether.collection.DependencySelector;
 import org.sonatype.aether.collection.DependencyTraverser;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.LocalRepository;
-import org.sonatype.aether.util.DefaultRepositorySystemSession;
 import org.sonatype.aether.util.graph.manager.ClassicDependencyManager;
 import org.sonatype.aether.util.graph.selector.AndDependencySelector;
 import org.sonatype.aether.util.graph.selector.ExclusionDependencySelector;
@@ -41,6 +38,13 @@ import org.sonatype.aether.util.repository.DefaultProxySelector;
 
 public class MavenBasedAether extends Aether {
 
+	  public static final String userHome = System.getProperty( "user.home" );
+
+	    public static final File userMavenConfigurationHome = new File( userHome, ".m2" );
+
+	    public static final File DEFAULT_USER_SETTINGS_FILE = new File( userMavenConfigurationHome, "settings.xml" );
+
+	    public static final File DEFAULT_REPOSITORY = new File( userMavenConfigurationHome, "repositort" );
 	public MavenBasedAether() {
 		super();
 
@@ -59,13 +63,16 @@ public class MavenBasedAether extends Aether {
 		DefaultSettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
 		request.setSystemProperties(System.getProperties());
 
-		request.setUserSettingsFile(RuntimeInfo.DEFAULT_USER_SETTINGS_FILE);
+		request.setUserSettingsFile(DEFAULT_USER_SETTINGS_FILE);
 
 		SettingsBuildingResult result = builder.build(request);
 		Settings settings = result.getEffectiveSettings();
 
 		if (settings.getLocalRepository() != null) {
 			LocalRepository localRepo = new LocalRepository(settings.getLocalRepository());
+			session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(localRepo));
+		} else {
+			LocalRepository localRepo = new LocalRepository(DEFAULT_REPOSITORY.getPath());
 			session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(localRepo));
 		}
 

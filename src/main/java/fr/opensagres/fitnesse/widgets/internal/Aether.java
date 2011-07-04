@@ -42,24 +42,20 @@ public class Aether {
 	private LocalRepository localRepository;
 
 	public Aether() {
-		
 
 		this.repositorySystem = Booter.newRepositorySystem();
-		
+
 	}
 
-	
 	public void setRemoteRepositories(List<String> remoteRepositories) {
 		this.remoteRepositories = remoteRepositories;
 	}
-
 
 	public void setLocalRepository(String localRepository) {
 		this.localRepository = new LocalRepository(localRepository);
 	}
 
-
-	protected  RepositorySystemSession newSession() throws Exception {
+	protected RepositorySystemSession newSession() throws Exception {
 		MavenRepositorySystemSession session = new MavenRepositorySystemSession();
 		session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(localRepository));
 		session.setTransferListener(new ConsoleTransferListener());
@@ -74,12 +70,13 @@ public class Aether {
 		Dependency dependency = new Dependency(artifact, "runtime");
 		CollectRequest collectRequest = new CollectRequest();
 		collectRequest.setRoot(dependency);
-		for (String remoteRepository : remoteRepositories) {
-			  URI uri = URI.create(remoteRepository);
-			  if (uri != null) {
-                  collectRequest.addRepository(new RemoteRepository(uri.getHost() + "/" + uri.getRawPath(),
-                          "default", remoteRepository));
-              }
+		if (remoteRepositories != null) {
+			for (String remoteRepository : remoteRepositories) {
+				URI uri = URI.create(remoteRepository);
+				if (uri != null) {
+					collectRequest.addRepository(new RemoteRepository(uri.getHost() + "/" + uri.getRawPath(), "default", remoteRepository));
+				}
+			}
 		}
 		collectRequest.addRepository(new RemoteRepository("central", "default", "http://repo1.maven.org/maven2"));
 
