@@ -65,6 +65,7 @@ public class ArtifactWidgetTest {
 
 	}
 
+	@Ignore
 	@Test
 	public void testComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from

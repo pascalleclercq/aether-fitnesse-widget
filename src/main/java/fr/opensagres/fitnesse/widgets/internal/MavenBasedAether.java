@@ -59,10 +59,10 @@ public class MavenBasedAether extends Aether {
 
 		session.setOffline(false);
 		SettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
-
+		
 		DefaultSettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
 		request.setSystemProperties(System.getProperties());
-
+System.out.println(DEFAULT_USER_SETTINGS_FILE);
 		request.setUserSettingsFile(DEFAULT_USER_SETTINGS_FILE);
 
 		SettingsBuildingResult result = builder.build(request);

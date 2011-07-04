@@ -21,6 +21,7 @@ public class MavenBasedArtifactWidgetTest {
 	public static void initClasspathWidgetBuilder() {
 		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class });
 		String root = new File(MavenBasedArtifactWidgetTest.class.getClassLoader().getResource(".").getFile()).getPath();
+		System.out.println(root);
 		System.setProperty("user.home", root);
 	}
 
