@@ -13,9 +13,6 @@ package fr.opensagres.fitnesse.widgets.internal;
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.net.URI;
 import java.util.List;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
@@ -29,12 +26,14 @@ import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.DependencyRequest;
+import org.sonatype.aether.util.DefaultRepositoryCache;
 import org.sonatype.aether.util.artifact.JavaScopes;
 import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
 
 import fr.opensagres.fitnesse.widgets.internal.eclipse.EclipseWorkspaceReader;
 
 public class Aether {
+
 	private List<String> remoteRepositories;
 
 	protected RepositorySystem repositorySystem;
@@ -42,9 +41,7 @@ public class Aether {
 	private LocalRepository localRepository;
 
 	public Aether() {
-
-		this.repositorySystem = Booter.newRepositorySystem();
-
+		this.repositorySystem = ManualRepositorySystemFactory.newRepositorySystem();
 	}
 
 	public void setRemoteRepositories(List<String> remoteRepositories) {
@@ -58,30 +55,35 @@ public class Aether {
 	protected RepositorySystemSession newSession() throws Exception {
 		MavenRepositorySystemSession session = new MavenRepositorySystemSession();
 		session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(localRepository));
-		session.setTransferListener(new ConsoleTransferListener());
-		session.setRepositoryListener(new ConsoleRepositoryListener());
-		session.setWorkspaceReader(new EclipseWorkspaceReader());
+		 session.setTransferListener(new ConsoleTransferListener());
+		 session.setRepositoryListener(new ConsoleRepositoryListener());
+		if (System.getProperty("m2eclipse.workspace.state") != null) {
+			session.setWorkspaceReader(new EclipseWorkspaceReader());
+		}
+		session.setNotFoundCachingEnabled(true);
+		session.setIgnoreInvalidArtifactDescriptor(true).setIgnoreMissingArtifactDescriptor(true);
+		session.setCache(new DefaultRepositoryCache());
 
 		return session;
 	}
 
-	public AetherResult resolve(Artifact artifact) throws Exception {
+	public String resolve(Artifact artifact) throws Exception {
 		RepositorySystemSession session = newSession();
 		Dependency dependency = new Dependency(artifact, "runtime");
 		CollectRequest collectRequest = new CollectRequest();
 		collectRequest.setRoot(dependency);
-		if (remoteRepositories != null) {
+		int id = 0;
+		if (remoteRepositories != null && !remoteRepositories.isEmpty()) {
 			for (String remoteRepository : remoteRepositories) {
-				URI uri = URI.create(remoteRepository);
-				if (uri != null) {
-					collectRequest.addRepository(new RemoteRepository(uri.getHost() + "/" + uri.getRawPath(), "default", remoteRepository));
-				}
+				collectRequest.addRepository(new RemoteRepository("repo" + id, "default", remoteRepository));
+				id++;
 			}
+		} else {
+			collectRequest.addRepository(new RemoteRepository("central", "default", "http://repo1.maven.org/maven2"));
 		}
-		collectRequest.addRepository(new RemoteRepository("central", "default", "http://repo1.maven.org/maven2"));
 
 		DependencyRequest dependencyRequest = new DependencyRequest();
-
+		
 		dependencyRequest.setCollectRequest(collectRequest);
 		dependencyRequest.setFilter(new DependencyFilter() {
 
@@ -92,20 +94,13 @@ public class Aether {
 				return !node.getDependency().getScope().equals(JavaScopes.TEST) && !node.getDependency().isOptional();
 			}
 		});
-		DependencyNode rootNode = repositorySystem.resolveDependencies(session, dependencyRequest).getRoot();
 
-		StringBuilder dump = new StringBuilder();
-		displayTree(rootNode, dump);
+		DependencyNode rootNode = repositorySystem.resolveDependencies(session, dependencyRequest).getRoot();
 
 		PreorderNodeListGenerator nlg = new PreorderNodeListGenerator();
 		rootNode.accept(nlg);
 
-		return new AetherResult(rootNode, nlg.getFiles(), nlg.getClassPath());
+		return nlg.getClassPath();
 	}
 
-	private void displayTree(DependencyNode node, StringBuilder sb) {
-		ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
-		node.accept(new ConsoleDependencyGraphDumper(new PrintStream(os)));
-		sb.append(os.toString());
-	}
 }
