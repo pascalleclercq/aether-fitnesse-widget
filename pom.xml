@@ -8,7 +8,7 @@
 	<groupId>fr.opensagres</groupId>
 	<artifactId>aether-fitnesse-widget</artifactId>
 	<packaging>jar</packaging>
-	<version>1.2.3-SNAPSHOT</version>
+	<version>1.2.3</version>
 	<name>Aether FitNesse Widget</name>
 	<url>http://www.opensagres.fr</url>
 	<developers>
