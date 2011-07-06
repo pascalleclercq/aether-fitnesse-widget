@@ -39,11 +39,11 @@ public class ArtifactWidgetTest {
 
 		PageCrawler crawler = root.getPageCrawler();
 
-		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"), "!define LOCAL_REPO {target/repo}\n!artifact junit:junit:3.8.2\n");
+		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"), "!define LOCAL_REPO {target/repo}\n!artifact junit:junit:3.8.1\n");
 
 		List<?> paths = page.getData().getClasspaths();
 
-		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
+		assertEquals(repoDir + "/junit/junit/3.8.1/junit-3.8.1.jar", paths.get(0));
 
 	}
 
@@ -65,7 +65,7 @@ public class ArtifactWidgetTest {
 
 	}
 
-	@Ignore
+	
 	@Test
 	public void testComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from
@@ -87,7 +87,7 @@ public class ArtifactWidgetTest {
 				+ "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar", paths.get(0));
 
 	}
-	@Ignore
+	
 	@Test
 	public void testMoreComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from
@@ -130,7 +130,7 @@ public class ArtifactWidgetTest {
 			WikiPage page = crawler
 					.addPage(root,
 							PathParser.parse("ClassPath"),
-							"!define REMOTE_REPO {http://oss.sonatype.org/content/repositories/JBoss/;https://oss.sonatype.org/content/repositories/appfuse-releases/}\n!define LOCAL_REPO {target/repo}\n!artifact org.springframework:spring:2.5.6.SEC02\n");
+							"!define REMOTE_REPO {http://repo1.maven.org/maven2;http://oss.sonatype.org/content/repositories/JBoss/;https://oss.sonatype.org/content/repositories/appfuse-releases/}\n!define LOCAL_REPO {target/repo}\n!artifact org.springframework:spring:2.5.6.SEC02\n");
 
 			List<String> paths = page.getData().getClasspaths();
 			System.out.println(paths);
