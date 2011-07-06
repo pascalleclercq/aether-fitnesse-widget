@@ -67,7 +67,6 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<preparationGoals>clean verify -DskipTests</preparationGoals>
-					<goals>deploy</goals>
 					<arguments>-DskipTests</arguments>
 				</configuration>
 			</plugin>
