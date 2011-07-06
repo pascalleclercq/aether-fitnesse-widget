@@ -62,14 +62,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<preparationGoals>clean verify -DskipTests</preparationGoals>
-					<arguments>-DskipTests</arguments>
-				</configuration>
-			</plugin>
+			
 		</plugins>
 		<pluginManagement>
 			<plugins>
