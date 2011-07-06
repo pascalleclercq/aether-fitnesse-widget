@@ -28,8 +28,7 @@ import fitnesse.wikitext.WidgetBuilder;
 import fitnesse.wikitext.widgets.ClasspathWidget;
 import fitnesse.wikitext.widgets.ParentWidget;
 import fr.opensagres.fitnesse.widgets.internal.Aether;
-import fr.opensagres.fitnesse.widgets.internal.AetherResult;
-import fr.opensagres.fitnesse.widgets.internal.MavenBasedAether;
+import fr.opensagres.fitnesse.widgets.internal.SettingsBasedAether;
 
 /**
  * @author pascalleclercq 
@@ -84,7 +83,7 @@ public class ArtifactWidget extends ClasspathWidget {
 	public String getText() throws Exception {
 		 Aether aether =null;
 		if(isUseSettingsXml()){
-			aether = new MavenBasedAether();
+			aether = new SettingsBasedAether();
 			
 		} else {
 			aether = new Aether();
@@ -94,8 +93,8 @@ public class ArtifactWidget extends ClasspathWidget {
 		  
 		final Artifact artifact = new DefaultArtifact(coords);
 
-		AetherResult result = aether.resolve(artifact);
-		return result.getResolvedClassPath();
+		
+		return aether.resolve(artifact);
 
 	}
 
