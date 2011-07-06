@@ -2,8 +2,12 @@
 
 == DESCRIPTION:
 
+One og the major issue with Fitness IMHO is the difficulty to calculate a classpath when using maven (including transitive dependencies).
+
 The purpose of this widget is to dynamically calculate a classpath against a maven coordinnate "<groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>".
-It relies on aether (https://docs.sonatype.org/display/AETHER/Home) It should work the same for maven, Ant-Ivy or any product that use a maven repository.  
+It relies on aether (https://docs.sonatype.org/display/AETHER/Home).
+Aether is a API to consume maven repos but It is not tied to maven Itself.
+It should work the same for maven, Ant-Ivy or any product that use a maven repository.  
 
 == FEATURES/PROBLEMS:
 
@@ -12,7 +16,8 @@ I'm looking for beta-tester !!! Don't hesitate to create issues, enhancement req
 == HOW-TO:
 
   1. Grab aether-fitnesse-widget-<version>-jar-with-dependencies.jar from maven central repo or from GitHub.
-  2. Create/edit a file named "plugins.properties" in the FitNesse server root directory. This must contain: WikiWidgets=fr.opensagres.fitnesse.widgets.ArtifactWidget
+  2. Create/edit a file named "plugins.properties" in the FitNesse server root directory. This must contain: 
+  WikiWidgets=fr.opensagres.fitnesse.widgets.ArtifactWidget
   3. Start FitNesse. this way : java -cp fitnesse.jar:aether-fitnesse-widget-<version>-jar-with-dependencies.jar fitnesseMain.FitNesseMain
   4. You should be able to see :
      FitNesse (v20101101) Started...
@@ -30,6 +35,32 @@ I'm looking for beta-tester !!! Don't hesitate to create issues, enhancement req
   !artifact groupId:artifactId:version
   
   This will load your projects classpath into the page. 
-  You can customize the place of the local repo by providing a value for "LOCAL_REPO" (eg : !define LOCAL_REPO {/Users/pascalleclercq/my_alternate_repo}).
+  You can customize the place of the local repo by providing a value for "LOCAL_REPO"
+   
+  !define LOCAL_REPO {/Users/pascalleclercq/my_alternate_repo}
+  
   If not set, the maven's default value will be use : ${user.home}/.m2/repository.
-  You can also define a remote repo where artifact can be downloaded if needed by providing a value for "REMOTE_REPO" (eg : !define REMOTE_REPO {http://mycompany:9080/nexus}).
+  You can also define a remote repo where artifact can be downloaded if needed by providing a value for mutiple "REMOTE_REPO" 
+  
+  !define REMOTE_REPO {http://mycompany:9080/snapshots;http://mycompany:9080/releases;http://mycompany:9080/public}
+  
+  Experimental :
+  Alternatively users may want to use their "settings.xml".
+  The plugin looks for ${user.home}/.m2/settings.xml and configure local repo and remote repos based on this informations.
+  
+  To use this feature you need to configure the USE_SETTINGS_XML like this :
+  
+  !define USE_SETTINGS_XML {true}
+  
+  
+== NOTA BENE
+  
+  Users can speficy multiple artifact and can mix with more traditionnal !path widget :
+  
+  !artifact groupId1:artifectId1:version
+  !artifact groupId2:artifectId2:version
+  !path target/classes  
+  
+
+  Happy acceptance tests !!!
+  
