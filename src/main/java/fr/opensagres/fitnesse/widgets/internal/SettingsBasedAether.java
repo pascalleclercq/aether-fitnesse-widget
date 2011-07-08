@@ -2,6 +2,7 @@ package fr.opensagres.fitnesse.widgets.internal;
 
 import java.io.File;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
@@ -16,13 +17,22 @@ import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.artifact.Artifact;
+import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.collection.DependencyGraphTransformer;
 import org.sonatype.aether.collection.DependencyManager;
 import org.sonatype.aether.collection.DependencySelector;
 import org.sonatype.aether.collection.DependencyTraverser;
+import org.sonatype.aether.graph.Dependency;
+import org.sonatype.aether.graph.DependencyFilter;
+import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.LocalRepository;
+import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.resolution.DependencyRequest;
 import org.sonatype.aether.util.artifact.JavaScopes;
+import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
 import org.sonatype.aether.util.graph.manager.ClassicDependencyManager;
 import org.sonatype.aether.util.graph.selector.AndDependencySelector;
 import org.sonatype.aether.util.graph.selector.ExclusionDependencySelector;
@@ -121,6 +131,47 @@ public class SettingsBasedAether extends Aether {
 		session.setConfigProps(configProps);
 
 		return session;
+	}
+	
+	public String resolve(Artifact artifact) throws Exception {
+		RepositorySystemSession session = newSession();
+		Dependency dependency = new Dependency(artifact, "runtime");
+		CollectRequest collectRequest = new CollectRequest();
+		collectRequest.setRoot(dependency);
+		System.out.println(settings.getMirrors());
+		System.out.println(settings.getActiveProfiles());
+		//settings.getProfiles().get(0).getRepositories().get(0).get
+		//RemoteRepository ee;
+		
+//		int id = 0;
+//		if (remoteRepositories != null && !remoteRepositories.isEmpty()) {
+//			for (String remoteRepository : remoteRepositories) {
+//				collectRequest.addRepository(new RemoteRepository("repo" + id, "default", remoteRepository));
+//				id++;
+//			}
+//		} else {
+			collectRequest.addRepository(new RemoteRepository("central", "default", "http://repo1.maven.org/maven2"));
+//		}
+
+		DependencyRequest dependencyRequest = new DependencyRequest();
+		
+		dependencyRequest.setCollectRequest(collectRequest);
+		dependencyRequest.setFilter(new DependencyFilter() {
+
+			@Override
+			public boolean accept(DependencyNode node, List<DependencyNode> parents) {
+				// no test dependencies
+				// no optional dependencies
+				return !node.getDependency().getScope().equals(JavaScopes.TEST) && !node.getDependency().isOptional();
+			}
+		});
+
+		DependencyNode rootNode = repositorySystem.resolveDependencies(session, dependencyRequest).getRoot();
+
+		PreorderNodeListGenerator nlg = new PreorderNodeListGenerator();
+		rootNode.accept(nlg);
+
+		return nlg.getClassPath();
 	}
 
 	protected static Settings settings;

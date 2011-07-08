@@ -15,6 +15,7 @@ package fr.opensagres.fitnesse.widgets.internal;
 
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
+import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
 import org.sonatype.aether.connector.wagon.WagonProvider;
 
 /**
@@ -33,7 +34,7 @@ public Wagon lookup( String roleHint )
     }
     if ( "https".equals( roleHint ) )
     {
-        return new LightweightHttpWagon();
+        return new LightweightHttpsWagon();
     }
     return null;
 }
