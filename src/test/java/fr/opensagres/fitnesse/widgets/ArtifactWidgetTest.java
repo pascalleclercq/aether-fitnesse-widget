@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -20,16 +21,17 @@ import fitnesse.wiki.PageData;
 import fitnesse.wiki.PathParser;
 import fitnesse.wiki.WikiPage;
 import fitnesse.wikitext.WidgetBuilder;
+import fitnesse.wikitext.widgets.ClasspathWidget;
 
 public class ArtifactWidgetTest {
 
 	@BeforeClass
 	public static void initClasspathWidgetBuilder() {
-		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class });
+		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class,ClasspathWidget.class });
 	}
 
 	private String repoDir = new File(ArtifactWidgetTest.class.getResource("/").getFile()).getParent() + "/repo";
-
+	
 	@Test
 	public void testJunit382NoRemoteRepo() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -46,7 +48,7 @@ public class ArtifactWidgetTest {
 		assertEquals(repoDir + "/junit/junit/3.8.1/junit-3.8.1.jar", paths.get(0));
 
 	}
-
+	
 	@Test
 	public void testJunit382() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -65,6 +67,25 @@ public class ArtifactWidgetTest {
 
 	}
 
+	@Test
+	public void multiplePathIssues() throws Exception {
+		// Very simple test : only 1 dependency resolved, jar is a dependency of
+		// the current module
+
+		WikiPage root = InMemoryPage.makeRoot("RooT");
+
+		PageCrawler crawler = root.getPageCrawler();
+
+		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"),
+				"!define REMOTE_REPO {http://repo1.maven.org/maven2/}\n!define LOCAL_REPO {target/repo}\n!artifact junit:junit:3.8.2\n!path target/classes\n");
+
+		List<String> paths = page.getData().getClasspaths();
+
+		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
+		assertEquals( "target/classes", paths.get(1));
+
+	}
+	
 	
 	@Test
 	public void testComplexDependency() throws Exception {

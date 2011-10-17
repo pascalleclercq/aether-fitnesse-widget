@@ -40,7 +40,7 @@ import fr.opensagres.fitnesse.widgets.internal.SettingsBasedAether;
 public class ArtifactWidget extends ClasspathWidget {
 
 	static {
-		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class });
+		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class, ClasspathWidget.class });
 	}
 
 	public static final String REGEXP = "^!artifact [^\r\n]*";
