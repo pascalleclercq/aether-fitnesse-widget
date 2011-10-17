@@ -31,6 +31,7 @@ import org.sonatype.aether.repository.Authentication;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.DependencyRequest;
+import org.sonatype.aether.util.DefaultRepositoryCache;
 import org.sonatype.aether.util.artifact.JavaScopes;
 import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
 import org.sonatype.aether.util.graph.manager.ClassicDependencyManager;
@@ -59,8 +60,7 @@ public class SettingsBasedAether extends Aether {
 	public static final File DEFAULT_REPOSITORY = new File(userMavenConfigurationHome, "repository");
 
 	public SettingsBasedAether() {
-		super();
-
+		this.repositorySystem = ManualRepositorySystemFactory.newRepositorySystem();
 	}
 
 	protected MavenRepositorySystemSession newSession() throws Exception {
@@ -120,8 +120,8 @@ public class SettingsBasedAether extends Aether {
 		DependencyManager depManager = new ClassicDependencyManager();
 		session.setDependencyManager(depManager);
 
-		DependencySelector depFilter = new AndDependencySelector(new ScopeDependencySelector(JavaScopes.TEST), new OptionalDependencySelector(), new ExclusionDependencySelector());
-		session.setDependencySelector(depFilter);
+	//	DependencySelector depFilter = new AndDependencySelector(new ScopeDependencySelector(JavaScopes.TEST), new OptionalDependencySelector(), new ExclusionDependencySelector());
+	//	session.setDependencySelector(depFilter);
 
 		DependencyGraphTransformer transformer = new ChainedDependencyGraphTransformer(new ConflictMarker(), new JavaEffectiveScopeCalculator(),
 				new NearestVersionConflictResolver(), new JavaDependencyContextRefiner());
@@ -129,32 +129,32 @@ public class SettingsBasedAether extends Aether {
 
 		session.setSystemProps(System.getProperties());
 		session.setConfigProps(configProps);
-
+		 session.setTransferListener(new ConsoleTransferListener());
+		 session.setRepositoryListener(new ConsoleRepositoryListener());
+		session.setCache(new DefaultRepositoryCache());
 		return session;
 	}
-	
+
 	public String resolve(Artifact artifact) throws Exception {
 		RepositorySystemSession session = newSession();
 		Dependency dependency = new Dependency(artifact, "runtime");
 		CollectRequest collectRequest = new CollectRequest();
 		collectRequest.setRoot(dependency);
-		System.out.println(settings.getMirrors());
-		System.out.println(settings.getActiveProfiles());
-		//settings.getProfiles().get(0).getRepositories().get(0).get
-		//RemoteRepository ee;
 		
-//		int id = 0;
-//		if (remoteRepositories != null && !remoteRepositories.isEmpty()) {
-//			for (String remoteRepository : remoteRepositories) {
-//				collectRequest.addRepository(new RemoteRepository("repo" + id, "default", remoteRepository));
-//				id++;
-//			}
-//		} else {
+		List<Mirror> mirrors = settings.getMirrors();
+		if (mirrors != null && !mirrors.isEmpty()) {
+			for (Mirror mirror : mirrors) {
+System.out.println(mirror.getId());
+				collectRequest.addRepository(new RemoteRepository(mirror.getId(), "default", mirror.getUrl()));
+			}
+		} else {
 			collectRequest.addRepository(new RemoteRepository("central", "default", "http://repo1.maven.org/maven2"));
-//		}
+		}
+		
+
 
 		DependencyRequest dependencyRequest = new DependencyRequest();
-		
+
 		dependencyRequest.setCollectRequest(collectRequest);
 		dependencyRequest.setFilter(new DependencyFilter() {
 
@@ -177,14 +177,15 @@ public class SettingsBasedAether extends Aether {
 	protected static Settings settings;
 
 	/**
-	 * this method takes some time.
-	 * It's better to "cache" the result once Its created
+	 * this method takes some time. It's better to "cache" the result once Its
+	 * created
+	 * 
 	 * @return
 	 * @throws SettingsBuildingException
 	 */
 	private Settings getSettings() throws SettingsBuildingException {
 		if (settings == null) {
-			
+
 			SettingsBuilder builder = new DefaultSettingsBuilderFactory().newInstance();
 
 			DefaultSettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
@@ -194,7 +195,6 @@ public class SettingsBasedAether extends Aether {
 
 			SettingsBuildingResult result = builder.build(request);
 			settings = result.getEffectiveSettings();
-			
 
 		}
 		return settings;

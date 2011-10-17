@@ -12,6 +12,8 @@ import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.connector.async.AsyncRepositoryConnectorFactory;
 import org.sonatype.aether.connector.file.FileRepositoryConnectorFactory;
 import org.sonatype.aether.connector.wagon.WagonProvider;
+import org.sonatype.aether.impl.RemoteRepositoryManager;
+import org.sonatype.aether.impl.internal.DefaultRemoteRepositoryManager;
 import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 
 /**
@@ -31,8 +33,9 @@ public class ManualRepositorySystemFactory
         DefaultServiceLocator locator = new DefaultServiceLocator();
         locator.addService( RepositoryConnectorFactory.class, FileRepositoryConnectorFactory.class );
         locator.addService( RepositoryConnectorFactory.class, AsyncRepositoryConnectorFactory.class );
+        locator.setServices(RemoteRepositoryManager.class, new DefaultRemoteRepositoryManager());
         locator.setServices( WagonProvider.class, new ManualWagonProvider() );
-
+        
         
         return locator.getService( RepositorySystem.class );
     }
