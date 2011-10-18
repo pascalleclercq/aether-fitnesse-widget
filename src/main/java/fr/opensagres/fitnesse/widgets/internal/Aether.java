@@ -51,12 +51,14 @@ public class Aether {
 	public void setLocalRepository(String localRepository) {
 		this.localRepository = new LocalRepository(localRepository);
 	}
-
+	private boolean debug="true".equals(System.getProperty("DEBUG"));
 	protected RepositorySystemSession newSession() throws Exception {
 		MavenRepositorySystemSession session = new MavenRepositorySystemSession();
 		session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(localRepository));
+		if(debug){
 		 session.setTransferListener(new ConsoleTransferListener());
 		 session.setRepositoryListener(new ConsoleRepositoryListener());
+		}
 		if (System.getProperty("m2eclipse.workspace.state") != null) {
 			session.setWorkspaceReader(new EclipseWorkspaceReader());
 		}
