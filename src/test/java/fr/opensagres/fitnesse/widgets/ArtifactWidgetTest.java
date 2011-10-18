@@ -31,13 +31,9 @@ public class ArtifactWidgetTest {
 		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class,ClasspathWidget.class });
 	}
 
-	/*@BeforeClass
-	public static void initClasspathWidgetBuilder() {
-		WidgetBuilder.htmlWidgetBuilder.addWidgetClass(ArtifactWidget.class);	
-	}*/
 	private String repoDir = new File(ArtifactWidgetTest.class.getResource("/").getFile()).getParent() + "/repo";
 	
-	@Ignore
+	
 	@Test
 	public void testJunit382NoRemoteRepo() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -55,7 +51,7 @@ public class ArtifactWidgetTest {
 
 	}
 	
-	@Ignore
+	
 	@Test
 	public void testJunit382() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -74,7 +70,7 @@ public class ArtifactWidgetTest {
 
 	}
 
-	@Ignore
+	
 	@Test
 	public void multiplePathIssues() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -152,7 +148,7 @@ public class ArtifactWidgetTest {
 	  }
 
 	
-	@Ignore
+	
 	@Test
 	public void testComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from
