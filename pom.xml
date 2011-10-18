@@ -63,7 +63,25 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<configuration>
+					<basedir>${basedir}</basedir>
+					<header>licenseHeader.txt</header>
+					<includes>
+						<include>src/**</include>
+						<include>**/test/**</include>
+						<include>build.properties</include>
+						<include>plugin.xml</include>
+					</includes>
+					<excludes>
+						<exclude>target/**</exclude>
+						<exclude>**/*.txt</exclude>
+						<exclude>**/*.xml</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -82,6 +100,11 @@
 				<plugin>
 					<artifactId>maven-enforcer-plugin</artifactId>
 					<version>1.0</version>
+				</plugin>
+				<plugin>
+					<groupId>com.mycila.maven-license-plugin</groupId>
+					<artifactId>maven-license-plugin</artifactId>
+					<version>1.9.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
