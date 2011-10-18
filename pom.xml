@@ -94,7 +94,8 @@
 			<groupId>org.fitnesse</groupId>
 			<artifactId>fitnesse</artifactId>
 			<version>20081201</version>
-			<scope>provided</scope>
+			<scope>system</scope>
+			<systemPath>${basedir}/fitnesse2.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -15,6 +14,8 @@ import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.resolution.DependencyResult;
 import org.sonatype.aether.transfer.ArtifactTransferException;
 
+import fitnesse.responders.run.TestSystem;
+import fitnesse.responders.run.TestSystem.Descriptor;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageCrawler;
 import fitnesse.wiki.PageData;
@@ -30,8 +31,13 @@ public class ArtifactWidgetTest {
 		PageData.classpathWidgetBuilder = new WidgetBuilder(new Class[] { ArtifactWidget.class,ClasspathWidget.class });
 	}
 
+	/*@BeforeClass
+	public static void initClasspathWidgetBuilder() {
+		WidgetBuilder.htmlWidgetBuilder.addWidgetClass(ArtifactWidget.class);	
+	}*/
 	private String repoDir = new File(ArtifactWidgetTest.class.getResource("/").getFile()).getParent() + "/repo";
 	
+	@Ignore
 	@Test
 	public void testJunit382NoRemoteRepo() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -42,13 +48,14 @@ public class ArtifactWidgetTest {
 		PageCrawler crawler = root.getPageCrawler();
 
 		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"), "!define LOCAL_REPO {target/repo}\n!artifact junit:junit:3.8.1\n");
-
+		
 		List<?> paths = page.getData().getClasspaths();
 
 		assertEquals(repoDir + "/junit/junit/3.8.1/junit-3.8.1.jar", paths.get(0));
 
 	}
 	
+	@Ignore
 	@Test
 	public void testJunit382() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -67,6 +74,7 @@ public class ArtifactWidgetTest {
 
 	}
 
+	@Ignore
 	@Test
 	public void multiplePathIssues() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -86,7 +94,65 @@ public class ArtifactWidgetTest {
 
 	}
 	
+	@Test
+	public void commandPatternClassical() throws Exception {
+		// Very simple test : only 1 dependency resolved, jar is a dependency of
+		// the current module
+
+		WikiPage root = InMemoryPage.makeRoot("RooT");
+		
+		PageCrawler crawler = root.getPageCrawler();
+		
+		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"),
+				"!define REMOTE_REPO {http://repo1.maven.org/maven2/}\n!define LOCAL_REPO {target/repo}\n!artifact junit:junit:3.8.2\n!define TEST_SYSTEM {slim}\n");
+		Descriptor defaultDescriptor = TestSystem.getDescriptor(page.getData(), false);
+		String sep = System.getProperty("path.separator");
+		assertEquals("java -cp fitnesse.jar" + sep + "%p %m", defaultDescriptor.commandPattern);
+		List<String> paths = page.getData().getClasspaths();
+
+		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
+		
+
+	}
+
+	@Test
+	public void commandPatternSpecialParam() throws Exception {
+		// Very simple test : only 1 dependency resolved, jar is a dependency of
+		// the current module
+
+		WikiPage root = InMemoryPage.makeRoot("RooT");
+		
+		PageCrawler crawler = root.getPageCrawler();
+		
+		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"),
+				"!define REMOTE_REPO {http://repo1.maven.org/maven2/}\n!define LOCAL_REPO {target/repo}\n!artifact junit:junit:3.8.2\n!define COMMAND_PATTERN {java -specialParam -cp %p %m}\n");
+		Descriptor defaultDescriptor = TestSystem.getDescriptor(page.getData(), false);
+		String sep = System.getProperty("path.separator");
+		assertEquals("java -specialParam -cp %p %m", defaultDescriptor.commandPattern);
+		List<String> paths = page.getData().getClasspaths();
+
+		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
+		
+
+	}
+	  @Test
+	  public void testCommandPatternWithVariable() throws Exception {
+	   
+
+		WikiPage root = InMemoryPage.makeRoot("RooT");
+		
+		PageCrawler crawler = root.getPageCrawler();
+		
+		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"),
+				"!define COMMAND_PATTERN (${MY_RUNNER} %p %m)\n!define MY_RUNNER {rubyslim}\n");
+		
+
+	    Descriptor myDescriptor = TestSystem.getDescriptor(page.getData(), false);
+	    assertEquals("rubyslim %p %m", myDescriptor.commandPattern);
+	  }
+
 	
+	@Ignore
 	@Test
 	public void testComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from
@@ -109,6 +175,7 @@ public class ArtifactWidgetTest {
 
 	}
 	
+	@Ignore
 	@Test
 	public void testMoreComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from
