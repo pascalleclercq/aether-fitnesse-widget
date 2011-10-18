@@ -95,6 +95,7 @@
 			<artifactId>fitnesse</artifactId>
 			<version>20101101</version>
 			<scope>system</scope>
+			<optional>true</optional>
 			<systemPath>${basedir}/fitnesse.jar</systemPath>
 		</dependency>
 		<dependency>
