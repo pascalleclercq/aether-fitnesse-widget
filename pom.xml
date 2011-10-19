@@ -150,6 +150,10 @@
 					<artifactId>plexus-utils</artifactId>
 					<groupId>org.codehaus.plexus</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>wagon-provider-api</artifactId>
+					<groupId>org.apache.maven.wagon</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -175,11 +179,12 @@
 					<groupId>nekohtml</groupId>
 					<artifactId>xercesMinimal</artifactId>
 				</exclusion>
+				
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
-			<version>3.0.3</version>
+			<version>${mavenVersion}</version>
 			<artifactId>maven-settings-builder</artifactId>
 		</dependency>
 	</dependencies>
@@ -187,7 +192,7 @@
 	<properties>
 		<aetherVersion>1.11</aetherVersion>
 		<mavenVersion>3.0.3</mavenVersion>
-		<wagonVersion>1.0-beta-6</wagonVersion>
+		<wagonVersion>1.0</wagonVersion>
 	</properties>
 
 	<profiles>
