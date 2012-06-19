@@ -36,8 +36,8 @@ public class ArtifactWidgetTest {
 	}
 
 	private String repoDir = new File(ArtifactWidgetTest.class.getResource("/").getFile()).getParent() + "/repo";
-	
-	
+
+
 	@Test
 	public void testJunit382NoRemoteRepo() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -48,14 +48,14 @@ public class ArtifactWidgetTest {
 		PageCrawler crawler = root.getPageCrawler();
 
 		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"), "!define LOCAL_REPO {target/repo}\n!artifact junit:junit:3.8.1\n");
-		
+
 		List<?> paths = page.getData().getClasspaths();
 
 		assertEquals(repoDir + "/junit/junit/3.8.1/junit-3.8.1.jar", paths.get(0));
 
 	}
-	
-	
+
+
 	@Test
 	public void testJunit382() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -74,7 +74,7 @@ public class ArtifactWidgetTest {
 
 	}
 
-	
+
 	@Test
 	public void multiplePathIssues() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -93,16 +93,16 @@ public class ArtifactWidgetTest {
 		assertEquals( "target/classes", paths.get(1));
 
 	}
-	
+
 	@Test
 	public void commandPatternClassical() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
 		// the current module
 
 		WikiPage root = InMemoryPage.makeRoot("RooT");
-		
+
 		PageCrawler crawler = root.getPageCrawler();
-		
+
 		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"),
 				"!define REMOTE_REPO {http://repo1.maven.org/maven2/}\n!define LOCAL_REPO {target/repo}\n!artifact junit:junit:3.8.2\n!define TEST_SYSTEM {slim}\n");
 		Descriptor defaultDescriptor = TestSystem.getDescriptor(page.getData(), false);
@@ -111,7 +111,7 @@ public class ArtifactWidgetTest {
 		List<String> paths = page.getData().getClasspaths();
 
 		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
-		
+
 
 	}
 
@@ -121,9 +121,9 @@ public class ArtifactWidgetTest {
 		// the current module
 
 		WikiPage root = InMemoryPage.makeRoot("RooT");
-		
+
 		PageCrawler crawler = root.getPageCrawler();
-		
+
 		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"),
 				"!define REMOTE_REPO {http://repo1.maven.org/maven2/}\n!define LOCAL_REPO {target/repo}\n!artifact junit:junit:3.8.2\n!define COMMAND_PATTERN {java -specialParam -cp %p %m}\n");
 		Descriptor defaultDescriptor = TestSystem.getDescriptor(page.getData(), false);
@@ -132,27 +132,27 @@ public class ArtifactWidgetTest {
 		List<String> paths = page.getData().getClasspaths();
 
 		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
-		
+
 
 	}
 	  @Test
 	  public void testCommandPatternWithVariable() throws Exception {
-	   
+
 
 		WikiPage root = InMemoryPage.makeRoot("RooT");
-		
+
 		PageCrawler crawler = root.getPageCrawler();
-		
+
 		WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"),
 				"!define COMMAND_PATTERN (${MY_RUNNER} %p %m)\n!define MY_RUNNER {rubyslim}\n");
-		
+
 
 	    Descriptor myDescriptor = TestSystem.getDescriptor(page.getData(), false);
 	    assertEquals("rubyslim %p %m", myDescriptor.commandPattern);
 	  }
 
-	
-	
+
+
 	@Test
 	public void testComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from
@@ -174,7 +174,7 @@ public class ArtifactWidgetTest {
 				+ "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar", paths.get(0));
 
 	}
-	
+
 	@Ignore
 	@Test
 	public void testMoreComplexDependency() throws Exception {
@@ -201,10 +201,10 @@ public class ArtifactWidgetTest {
 	/**
 	 * com.sun.jdmk:jmxtools:jar:1.2.1 com.sun.jmx:jmxri:jar:1.2.1 are not
 	 * available on any repo : Too bad...
-	 * 
+	 *
 	 * @throws Exception
 	 */
-	@Ignore("This test is time consuming and not very usefull on Jenkins...") 
+	@Ignore("This test is time consuming and not very usefull on Jenkins...")
 	@Test(expected = DependencyResolutionException.class)
 	public void testSpring() throws Exception {
 		// Complex test : Full tree resolved from
