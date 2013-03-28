@@ -14,6 +14,9 @@ package fr.opensagres.fitnesse.widgets.internal;
  */
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.maven.repository.internal.DefaultServiceLocator;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.sonatype.aether.RepositorySystem;
@@ -38,16 +41,19 @@ import fr.opensagres.fitnesse.widgets.internal.eclipse.EclipseWorkspaceReader;
 
 public class Aether
 {
-    private String remoteRepository;
+
     private RepositorySystem repositorySystem;
     private LocalRepository localRepository;
 
-    public Aether( String remoteRepository, String localRepository )
+    public Aether(  )
     {
-        this.remoteRepository = remoteRepository;
+
         this.repositorySystem = newManualSystem();
-        this.localRepository = new LocalRepository( localRepository );
+        
     }
+    public void setLocalRepository(LocalRepository localRepository) {
+		this.localRepository = localRepository;
+	}
 
     //
     // Setting up the repository system with the mechanism to find components
@@ -80,12 +86,12 @@ public class Aether
     
     
     Dependency dependency = new Dependency( artifact, "runtime" );
-    RemoteRepository central = new RemoteRepository( "central", "default", remoteRepository );
+    
    
     CollectRequest collectRequest = new CollectRequest();
     collectRequest.setRoot( dependency );
   
-    collectRequest.addRepository( central );
+    collectRequest.setRepositories(repositories);
     
     DependencyNode rootNode = repositorySystem.collectDependencies( session, collectRequest ).getRoot();
 
@@ -108,12 +114,10 @@ public class Aether
         
         
         Dependency dependency = new Dependency( new DefaultArtifact( groupId, artifactId, "", "jar", version ), "runtime" );
-        RemoteRepository central = new RemoteRepository( "central", "default", remoteRepository );
 
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( dependency );
-        collectRequest.addRepository( central );
-        
+        collectRequest.setRepositories(repositories);
 
         DependencyNode rootNode = repositorySystem.collectDependencies( session, collectRequest ).getRoot();
 
@@ -164,5 +168,11 @@ public class Aether
             displayTree( child, indent, sb );
         }
     }
+
+    private List<RemoteRepository> repositories = new ArrayList<RemoteRepository>();
+	public void addRemoteRepository(RemoteRepository remoteRepository) {
+		repositories.add(remoteRepository);
+		
+	}
 
 }

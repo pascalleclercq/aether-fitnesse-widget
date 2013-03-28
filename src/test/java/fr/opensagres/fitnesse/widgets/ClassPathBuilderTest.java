@@ -3,6 +3,7 @@ package fr.opensagres.fitnesse.widgets;
 // Released under the terms of the CPL Common Public License version 1.0.
 
 
+import java.util.List;
 import java.util.Properties;
 
 import util.FileUtil;
@@ -16,10 +17,6 @@ import fitnesse.wiki.PageData;
 import fitnesse.wiki.PathParser;
 import fitnesse.wiki.WikiPage;
 import fitnesse.wiki.WikiPagePath;
-import fitnesse.wikitext.parser.Symbol;
-import fitnesse.wikitext.parser.SymbolProvider;
-import fitnesse.wikitext.parser.SymbolType;
-import fitnesse.wikitext.test.TestRoot;
 
 public class ClassPathBuilderTest extends RegexTestCase {
   private WikiPage root;
@@ -184,12 +181,6 @@ public class ClassPathBuilderTest extends RegexTestCase {
   public void testJunit382() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
 		// the current module
-	  
-	    //String symbolValues = MavenArtifact.class.getName();
-	    //testProperties.setProperty(ComponentFactory.SYMBOL_TYPES, symbolValues);
-	    //testProvider.add(MavenArtifact.symbolType);
-	    
-	    
 	    WikiPage page = crawler.addPage(root, PathParser.parse("TestPage"),
 	    		"!artifact junit:junit:3.8.2\n" +
 	    	        "!path my.jar");
@@ -197,9 +188,11 @@ public class ClassPathBuilderTest extends RegexTestCase {
 	    	    page.commit(data);
            
       System.out.println(builder.getClasspath(root.getChildPage("TestPage")));
-//		List<?> paths = page.getData().getClasspaths();
-
-//		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
+      
+	List<String> paths = page.getData().getClasspaths();
+System.out.println(paths.size());
+		assertEquals("<span class=\"meta\">classpath: "+MavenArtifact.userMavenConfigurationHome+"/repository" + "/junit/junit/3.8.2/junit-3.8.2.jar"+"</span>",
+				paths.get(0));
 
 	}
 }
