@@ -7,9 +7,24 @@
 	<proxies></proxies>
 	<servers></servers>
 
-	<mirrors></mirrors>
+
+
+	<mirrors>
+
+
+	</mirrors>
 
 	<profiles>
+		<profile>
+			<repositories>
+				<repository>
+					<id>jboss</id>
+					<url>http://repository.jboss.org/maven2/</url>
+				</repository>
+
+			</repositories>
+
+		</profile>
 	</profiles>
 
 	<activeProfiles>

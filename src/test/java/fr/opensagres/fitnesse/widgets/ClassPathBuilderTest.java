@@ -3,6 +3,7 @@ package fr.opensagres.fitnesse.widgets;
 // Copyright (C) 2003-2009 by Object Mentor, Inc. All rights reserved.
 // Released under the terms of the CPL Common Public License version 1.0.
 
+import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
@@ -11,39 +12,35 @@ import util.RegexTestCase;
 import fitnesse.ComponentFactory;
 import fitnesse.components.ClassPathBuilder;
 import fitnesse.wiki.InMemoryPage;
-import fitnesse.wiki.MockingPageCrawler;
 import fitnesse.wiki.PageCrawler;
 import fitnesse.wiki.PageData;
 import fitnesse.wiki.PathParser;
 import fitnesse.wiki.WikiPage;
-import fitnesse.wiki.WikiPagePath;
 
 public class ClassPathBuilderTest extends RegexTestCase {
-	private WikiPage root;
-	private ClassPathBuilder builder;
-	String pathSeparator = System.getProperty("path.separator");
-	private PageCrawler crawler;
-	private WikiPagePath somePagePath;
 	private static final String TEST_DIR = "testDir";
-
-	public void setUp() throws Exception {
-		testProperties = new Properties();
-		String symbolValues = MavenArtifact.class.getName();
-		testProperties.setProperty(ComponentFactory.SYMBOL_TYPES, symbolValues);
-		// testProvider = new SymbolProvider(new SymbolType[] {MavenArtifact.symbolType});
-
-		factory = new ComponentFactory(testProperties);
-		
-		String output = factory.loadSymbolTypes();
-		System.out.println(output);
-
-		root = InMemoryPage.makeRoot("RooT");
-
-		crawler = root.getPageCrawler();
-		builder = new ClassPathBuilder();
-		somePagePath = PathParser.parse("SomePage");
-
+	public static void deleteSampleFiles() {
+		FileUtil.deleteFileSystemDirectory(TEST_DIR);
 	}
+	public static void makeSampleFiles() {
+		FileUtil.makeDir(TEST_DIR);
+		FileUtil.createFile(TEST_DIR + "/one.jar", "");
+		FileUtil.createFile(TEST_DIR + "/two.jar", "");
+		FileUtil.createFile(TEST_DIR + "/one.dll", "");
+		FileUtil.createFile(TEST_DIR + "/two.dll", "");
+		FileUtil.createFile(TEST_DIR + "/oneA", "");
+		FileUtil.createFile(TEST_DIR + "/twoA", "");
+		FileUtil.createDir(TEST_DIR + "/subdir");
+		FileUtil.createFile(TEST_DIR + "/subdir/sub1.jar", "");
+		FileUtil.createFile(TEST_DIR + "/subdir/sub2.jar", "");
+		FileUtil.createFile(TEST_DIR + "/subdir/sub1.dll", "");
+		FileUtil.createFile(TEST_DIR + "/subdir/sub2.dll", "");
+	}
+	private ClassPathBuilder builder;
+
+	private PageCrawler crawler;
+
+	private ComponentFactory factory;
 
 //	public void testGetClasspath() throws Exception {
 //		crawler.addPage(root, PathParser.parse("TestPage"), "!path fitnesse.jar\n" + "!path my.jar");
@@ -143,29 +140,30 @@ public class ClassPathBuilderTest extends RegexTestCase {
 //		}
 //	}
 
-	public static void makeSampleFiles() {
-		FileUtil.makeDir(TEST_DIR);
-		FileUtil.createFile(TEST_DIR + "/one.jar", "");
-		FileUtil.createFile(TEST_DIR + "/two.jar", "");
-		FileUtil.createFile(TEST_DIR + "/one.dll", "");
-		FileUtil.createFile(TEST_DIR + "/two.dll", "");
-		FileUtil.createFile(TEST_DIR + "/oneA", "");
-		FileUtil.createFile(TEST_DIR + "/twoA", "");
-		FileUtil.createDir(TEST_DIR + "/subdir");
-		FileUtil.createFile(TEST_DIR + "/subdir/sub1.jar", "");
-		FileUtil.createFile(TEST_DIR + "/subdir/sub2.jar", "");
-		FileUtil.createFile(TEST_DIR + "/subdir/sub1.dll", "");
-		FileUtil.createFile(TEST_DIR + "/subdir/sub2.dll", "");
-	}
+	String pathSeparator = System.getProperty("path.separator");
 
-	public static void deleteSampleFiles() {
-		FileUtil.deleteFileSystemDirectory(TEST_DIR);
-	}
+	private WikiPage root;
 
 	private Properties testProperties;
-	private ComponentFactory factory;
+	public void setUp() throws Exception {
+		testProperties = new Properties();
+		String symbolValues = MavenArtifact.class.getName();
+		testProperties.setProperty(ComponentFactory.SYMBOL_TYPES, symbolValues);
+		// testProvider = new SymbolProvider(new SymbolType[] {MavenArtifact.symbolType});
 
-	// private SymbolProvider testProvider;
+		factory = new ComponentFactory(testProperties);
+		
+		String output = factory.loadSymbolTypes();
+		System.out.println(output);
+
+		root = InMemoryPage.makeRoot("RooT");
+
+		crawler = root.getPageCrawler();
+		builder = new ClassPathBuilder();
+
+
+	}
+
 
 	public void testJunit382() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
@@ -196,4 +194,54 @@ public class ClassPathBuilderTest extends RegexTestCase {
 		assertTrue(paths.get(0).endsWith("target/testRepo/junit/junit/3.8.2/junit-3.8.2.jar" + "</span>"));
 
 	}
+	
+	
+	private String repoDir = new File(ClassPathBuilderTest.class.getResource("/").getFile()).getParent() + "/testRepo";
+	public void testComplexDependency() throws Exception {
+		// Complex test : Full tree resolved from http://repository.jboss.org/maven2/
+		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage3"), "!define settings {src/test/resources/settings.xml}\n"+
+				"!artifact org.hibernate:hibernate-core:3.3.0.CR1\n");
+		PageData data = page.getData();
+		page.commit(data);
+
+		
+		List<String> paths = page.getData().getClasspaths();
+		System.err.println("UUU "+paths.get(0));
+
+		System.err.println("XXX "+"<span class=\"meta\">classpath: "+ 
+		repoDir + "/org/hibernate/hibernate-core/3.3.0.CR1/hibernate-core-3.3.0.CR1.jar:" 
+		+ repoDir + "/antlr/antlr/2.7.6/antlr-2.7.6.jar:"
+		+ repoDir + "/commons-collections/commons-collections/3.1/commons-collections-3.1.jar:" 
+		+ repoDir + "/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:" 
+		+ repoDir + "/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:" 
+		+ repoDir + "/javax/transaction/jta/1.1/jta-1.1.jar:" 
+		+ repoDir + "/javassist/javassist/3.4.GA/javassist-3.4.GA.jar:" 
+		+ repoDir + "/cglib/cglib/2.1_3/cglib-2.1_3.jar:" 
+		+ repoDir + "/asm/asm/1.5.3/asm-1.5.3.jar:" 
+		+ repoDir + "/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar:" 
+		+ repoDir + "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar"
+		+ "</span>");
+
+		assertEquals(
+				"<span class=\"meta\">classpath: "+ 
+				repoDir + "/org/hibernate/hibernate-core/3.3.0.CR1/hibernate-core-3.3.0.CR1.jar:" 
+				+ repoDir + "/antlr/antlr/2.7.6/antlr-2.7.6.jar:"
+				+ repoDir + "/commons-collections/commons-collections/3.1/commons-collections-3.1.jar:" 
+				+ repoDir + "/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:" 
+				+ repoDir + "/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:" 
+				+ repoDir + "/javax/transaction/jta/1.1/jta-1.1.jar:" 
+				+ repoDir + "/javassist/javassist/3.4.GA/javassist-3.4.GA.jar:" 
+				+ repoDir + "/cglib/cglib/2.1_3/cglib-2.1_3.jar:" 
+				+ repoDir + "/asm/asm/1.5.3/asm-1.5.3.jar:" 
+				+ repoDir + "/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar:" 
+				+ repoDir + "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar"
+				+ "</span>", paths.get(0));
+
+	}
+	
+	
+	
+	
+	
+	
 }
