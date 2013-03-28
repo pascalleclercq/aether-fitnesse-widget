@@ -19,6 +19,7 @@ package fr.opensagres.fitnesse.widgets.internal;
 
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
+import org.apache.maven.wagon.providers.http.LightweightHttpWagonAuthenticator;
 import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
 import org.sonatype.aether.connector.wagon.WagonProvider;
 
@@ -32,15 +33,17 @@ implements WagonProvider
 public Wagon lookup( String roleHint )
     throws Exception
 {
+	LightweightHttpWagon wagon=null;
     if ( "http".equals( roleHint ) )
     {
-        return new LightweightHttpWagon();
+    	wagon= new LightweightHttpWagon();
     }
     if ( "https".equals( roleHint ) )
     {
-        return new LightweightHttpsWagon();
+    	wagon=new LightweightHttpsWagon();
     }
-    return null;
+    wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
+    return wagon;
 }
 
 public void release( Wagon wagon )

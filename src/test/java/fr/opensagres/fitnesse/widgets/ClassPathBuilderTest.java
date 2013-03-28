@@ -33,6 +33,7 @@ public class ClassPathBuilderTest extends RegexTestCase {
 		// testProvider = new SymbolProvider(new SymbolType[] {MavenArtifact.symbolType});
 
 		factory = new ComponentFactory(testProperties);
+		
 		String output = factory.loadSymbolTypes();
 		System.out.println(output);
 

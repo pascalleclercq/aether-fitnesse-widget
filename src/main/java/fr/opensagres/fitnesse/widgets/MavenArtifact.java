@@ -18,6 +18,7 @@ import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 
 import util.Maybe;
+import fitnesse.components.Logger;
 import fitnesse.wikitext.parser.HtmlBuilder;
 import fitnesse.wikitext.parser.Matcher;
 import fitnesse.wikitext.parser.Parser;
@@ -45,6 +46,7 @@ public class MavenArtifact extends SymbolType implements Rule, PathsProvider {
 	public Collection<String> providePaths(Translator translator, Symbol symbol) {
 		AetherResult result = null;
 		try {
+			
 			Settings settings = getFromSettings();
 			List<Mirror> mirrors = settings.getMirrors();
 			final Aether aether = new Aether();
@@ -65,6 +67,7 @@ public class MavenArtifact extends SymbolType implements Rule, PathsProvider {
 
 	public Maybe<Symbol> parse(Symbol current, Parser parser) {
 		settingsPath = parser.getVariableSource().findVariable("settings").getValue();
+		
 		if (!parser.isMoveNext(SymbolType.Whitespace))
 			return Symbol.nothing;
 
