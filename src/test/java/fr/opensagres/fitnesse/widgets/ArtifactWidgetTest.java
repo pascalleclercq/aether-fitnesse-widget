@@ -64,62 +64,62 @@ public class ArtifactWidgetTest extends RegexTestCase {
 	        assertEquals(match.isMatch(), expected);
 	    }
 //	
-	private String repoDir = new File(ArtifactWidgetTest.class.getResource("/").getFile()).getParent() + "/repo";
-
-	public void testJunit382() throws Exception {
-		// Very simple test : only 1 dependency resolved, jar is a dependency of
-		// the current module
-
-	    String symbolValues = MavenArtifact.class.getName();
-	    testProperties.setProperty(ComponentFactory.SYMBOL_TYPES, symbolValues);
-	    
-	    String output = factory.loadSymbolTypes();
-System.out.println(output);
-
-//		WikiPage root = InMemoryPage.makeRoot("RooT");
+//	private String repoDir = new File(ArtifactWidgetTest.class.getResource("/").getFile()).getParent() + "/repo";
 //
-//		PageCrawler crawler = root.getPageCrawler();
-////!define REMOTE_REPO {http://repo1.maven.org/maven2/}\n!define LOCAL_REPO {target/repo}\n
-//		//WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"), "!artifact junit:junit:3.8.2\n");
-//		WikiPage page =crawler.addPage(root, PathParser.parse("ClassPath"));
-//		
-//		PageData data = page.getData();
-//        data.setContent("!artifact junit:junit:3.8.2");
-//        page.commit(data);
+//	public void testJunit382() throws Exception {
+//		// Very simple test : only 1 dependency resolved, jar is a dependency of
+//		// the current module
+//
+//	    String symbolValues = MavenArtifact.class.getName();
+//	    testProperties.setProperty(ComponentFactory.SYMBOL_TYPES, symbolValues);
+//	    
+//	    String output = factory.loadSymbolTypes();
+//System.out.println(output);
+//
+////		WikiPage root = InMemoryPage.makeRoot("RooT");
+////
+////		PageCrawler crawler = root.getPageCrawler();
+//////!define REMOTE_REPO {http://repo1.maven.org/maven2/}\n!define LOCAL_REPO {target/repo}\n
+////		//WikiPage page = crawler.addPage(root, PathParser.parse("ClassPath"), "!artifact junit:junit:3.8.2\n");
+////		WikiPage page =crawler.addPage(root, PathParser.parse("ClassPath"));
+////		
+////		PageData data = page.getData();
+////        data.setContent("!artifact junit:junit:3.8.2");
+////        page.commit(data);
+////        
 //        
-        
-        String input="!artifact junit:junit:3.8.2\n";
-        WikiPage page = new TestRoot().makePage("TestPage", input);
-        Symbol result = parse(page, input);
-  System.out.println(serialize(result));      
-        
-//		List<?> paths = page.getData().getClasspaths();
-
-//		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
-
-	}
+//        String input="!artifact junit:junit:3.8.2\n";
+//        WikiPage page = new TestRoot().makePage("TestPage", input);
+//        Symbol result = parse(page, input);
+//  System.out.println(serialize(result));      
+//        
+////		List<?> paths = page.getData().getClasspaths();
+//
+////		assertEquals(repoDir + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
+//
+//	}
 	
-	public static Symbol parse(WikiPage page, String input) {
-	    return Parser.make(new ParsingPage(new WikiSourcePage(page)), input).parse();
-	  }
-	  public static Symbol parse(WikiPage page) throws Exception {
-		    return Parser.make(new ParsingPage(new WikiSourcePage(page)), page.getData().getContent()).parse();
-		  }
-
-	  
-
-	  public static String serialize(Symbol symbol) {
-	    StringBuilder result = new StringBuilder();
-	    result.append(symbol.getType() != null ? symbol.getType().toString() : "?no type?");
-	    int i = 0;
-	    for (Symbol child : symbol.getChildren()) {
-	      result.append(i == 0 ? "[" : ", ");
-	      result.append(serialize(child));
-	      i++;
-	    }
-	    if (i > 0) result.append("]");
-	    return result.toString();
-	  }
+//	public static Symbol parse(WikiPage page, String input) {
+//	    return Parser.make(new ParsingPage(new WikiSourcePage(page)), input).parse();
+//	  }
+//	  public static Symbol parse(WikiPage page) throws Exception {
+//		    return Parser.make(new ParsingPage(new WikiSourcePage(page)), page.getData().getContent()).parse();
+//		  }
+//
+//	  
+//
+//	  public static String serialize(Symbol symbol) {
+//	    StringBuilder result = new StringBuilder();
+//	    result.append(symbol.getType() != null ? symbol.getType().toString() : "?no type?");
+//	    int i = 0;
+//	    for (Symbol child : symbol.getChildren()) {
+//	      result.append(i == 0 ? "[" : ", ");
+//	      result.append(serialize(child));
+//	      i++;
+//	    }
+//	    if (i > 0) result.append("]");
+//	    return result.toString();
+//	  }
 
 //
 //	public void testComplexDependency() throws Exception {

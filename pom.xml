@@ -96,11 +96,7 @@
 			<version>3.8.2</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.sonatype.aether</groupId>
-			<artifactId>aether-impl</artifactId>
-			<version>${aetherVersion}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.sonatype.aether</groupId>
 			<artifactId>aether-connector-wagon</artifactId>
@@ -149,8 +145,8 @@
 	</dependencies>
 
 	<properties>
-		<aetherVersion>1.7</aetherVersion>
-		<mavenVersion>3.0</mavenVersion>
+		<aetherVersion>1.13.1</aetherVersion>
+		<mavenVersion>3.0.5</mavenVersion>
 		<wagonVersion>1.0-beta-6</wagonVersion>
 	</properties>
 

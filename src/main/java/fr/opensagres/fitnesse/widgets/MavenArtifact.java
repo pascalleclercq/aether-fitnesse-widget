@@ -21,9 +21,9 @@ import util.Maybe;
 import fitnesse.wikitext.parser.HtmlBuilder;
 import fitnesse.wikitext.parser.Matcher;
 import fitnesse.wikitext.parser.Parser;
-import fitnesse.wikitext.parser.Path;
 import fitnesse.wikitext.parser.PathsProvider;
 import fitnesse.wikitext.parser.Rule;
+import fitnesse.wikitext.parser.SourcePage;
 import fitnesse.wikitext.parser.Symbol;
 import fitnesse.wikitext.parser.SymbolProvider;
 import fitnesse.wikitext.parser.SymbolType;
@@ -43,10 +43,9 @@ public class MavenArtifact extends SymbolType implements Rule, PathsProvider {
 	}
 
 	public Collection<String> providePaths(Translator translator, Symbol symbol) {
-		String settingsPath = symbol.getProperty("settings");
 		AetherResult result = null;
 		try {
-			Settings settings = getFromSettings(settingsPath);
+			Settings settings = getFromSettings();
 			List<Mirror> mirrors = settings.getMirrors();
 			final Aether aether = new Aether();
 			if (mirrors.isEmpty()) {
@@ -58,14 +57,14 @@ public class MavenArtifact extends SymbolType implements Rule, PathsProvider {
 			final Artifact artifact = new DefaultArtifact(coords);
 			result = aether.resolve(artifact);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 
 		return Arrays.asList(translator.translate(new Symbol(MavenArtifact.symbolType).add(result.getResolvedClassPath())));
 	}
 
 	public Maybe<Symbol> parse(Symbol current, Parser parser) {
+		settingsPath = parser.getVariableSource().findVariable("settings").getValue();
 		if (!parser.isMoveNext(SymbolType.Whitespace))
 			return Symbol.nothing;
 
@@ -78,37 +77,42 @@ public class MavenArtifact extends SymbolType implements Rule, PathsProvider {
 
 	public static final File DEFAULT_USER_SETTINGS_FILE = new File(userMavenConfigurationHome, "settings.xml");
 
-	public Settings getFromSettings(String path) throws SettingsBuildingException {
-		File userSettingsFile=getSettingsFile(path);
-		if(userSettingsFile.exists()){
-			
-		
-		DefaultSettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
-		request.setUserSettingsFile(userSettingsFile);
+	private String settingsPath;
 
-		DefaultSettingsBuilder settingsBuilder = new DefaultSettingsBuilderFactory().newInstance();
+	void setSettingsPath(String settingsPath) {
+		this.settingsPath = settingsPath;
+	}
 
-		SettingsBuildingResult result = settingsBuilder.build(request);
+	public Settings getFromSettings() throws SettingsBuildingException {
+		File userSettingsFile = getSettingsFile(settingsPath);
+		if (userSettingsFile.exists()) {
 
-		Settings settings = result.getEffectiveSettings();
-		if (settings.getLocalRepository() == null) {
-			settings.setLocalRepository(userMavenConfigurationHome + "/repository");
-		}
-		return settings;
+			DefaultSettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
+			request.setUserSettingsFile(userSettingsFile);
+
+			DefaultSettingsBuilder settingsBuilder = new DefaultSettingsBuilderFactory().newInstance();
+
+			SettingsBuildingResult result = settingsBuilder.build(request);
+
+			Settings settings = result.getEffectiveSettings();
+			if (settings.getLocalRepository() == null) {
+				settings.setLocalRepository(userMavenConfigurationHome + "/repository");
+			}
+			return settings;
 		} else {
-			//mock a default settings file...
+			// mock a default settings file...
 			Settings settings = new Settings();
 			settings.setLocalRepository(userMavenConfigurationHome + "/repository");
-			
+
 			return settings;
 		}
 	}
 
 	private File getSettingsFile(String path) {
-		if(path!=null){
+		if (path != null) {
 			return new File(path);
 		}
-		//else...
+		// else...
 		return DEFAULT_USER_SETTINGS_FILE;
 	}
 }
