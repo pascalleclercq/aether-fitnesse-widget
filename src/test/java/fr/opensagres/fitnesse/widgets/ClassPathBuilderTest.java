@@ -172,11 +172,14 @@ public class ClassPathBuilderTest extends RegexTestCase {
 		PageData data = page.getData();
 		page.commit(data);
 
-		System.out.println(builder.getClasspath(root.getChildPage("TestPage")));
+		//System.out.println(builder.getClasspath(root.getChildPage("TestPage")));
 
 		List<String> paths = page.getData().getClasspaths();
-		System.out.println(paths.size());
-		assertEquals("<span class=\"meta\">classpath: " + MavenArtifact.userMavenConfigurationHome + "/repository" + "/junit/junit/3.8.2/junit-3.8.2.jar" + "</span>", paths.get(0));
+		
+		for (String path : paths) {
+			System.out.println("XXXXXXX   "+path);
+		}
+		assertEquals(MavenArtifact.userMavenConfigurationHome + "/repository" + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
 
 	}
 	
@@ -187,15 +190,12 @@ public class ClassPathBuilderTest extends RegexTestCase {
 		PageData data = page.getData();
 		page.commit(data);
 
-		System.out.println(builder.getClasspath(root.getChildPage("TestPage2")));
+	//	System.out.println(builder.getClasspath(root.getChildPage("TestPage2")));
 
 		List<String> paths = page.getData().getClasspaths();
-		System.out.println(paths.size());
+	//	System.out.println(paths.size());
 		
-		assertEquals(
-				"<span class=\"meta\">classpath: " 
-				+ repoDir +"/junit/junit/3.8.2/junit-3.8.2.jar"
-				+ "</span>",
+		assertEquals( repoDir +"/junit/junit/3.8.2/junit-3.8.2.jar",
 				paths.get(0));
 
 
@@ -205,31 +205,13 @@ public class ClassPathBuilderTest extends RegexTestCase {
 	private String repoDir = new File(ClassPathBuilderTest.class.getResource("/").getFile()).getParent() + "/testRepo";
 	public void testComplexDependency() throws Exception {
 		// Complex test : Full tree resolved from http://repository.jboss.org/maven2/
-		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage3"), "!define settings {src/test/resources/settings.xml}\n"+
+		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage3"), 
+				"!define settings {src/test/resources/settings.xml}\n"+
 				"!artifact org.hibernate:hibernate-core:3.3.0.CR1\n");
 		PageData data = page.getData();
 		page.commit(data);
-
-		
 		List<String> paths = page.getData().getClasspaths();
-		System.err.println("UUU "+paths.get(0));
-
-		System.err.println("XXX "+"<span class=\"meta\">classpath: "+ 
-		repoDir + "/org/hibernate/hibernate-core/3.3.0.CR1/hibernate-core-3.3.0.CR1.jar:" 
-		+ repoDir + "/antlr/antlr/2.7.6/antlr-2.7.6.jar:"
-		+ repoDir + "/commons-collections/commons-collections/3.1/commons-collections-3.1.jar:" 
-		+ repoDir + "/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:" 
-		+ repoDir + "/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:" 
-		+ repoDir + "/javax/transaction/jta/1.1/jta-1.1.jar:" 
-		+ repoDir + "/javassist/javassist/3.4.GA/javassist-3.4.GA.jar:" 
-		+ repoDir + "/cglib/cglib/2.1_3/cglib-2.1_3.jar:" 
-		+ repoDir + "/asm/asm/1.5.3/asm-1.5.3.jar:" 
-		+ repoDir + "/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar:" 
-		+ repoDir + "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar"
-		+ "</span>");
-
 		assertEquals(
-				"<span class=\"meta\">classpath: "+ 
 				repoDir + "/org/hibernate/hibernate-core/3.3.0.CR1/hibernate-core-3.3.0.CR1.jar:" 
 				+ repoDir + "/antlr/antlr/2.7.6/antlr-2.7.6.jar:"
 				+ repoDir + "/commons-collections/commons-collections/3.1/commons-collections-3.1.jar:" 
@@ -240,8 +222,8 @@ public class ClassPathBuilderTest extends RegexTestCase {
 				+ repoDir + "/cglib/cglib/2.1_3/cglib-2.1_3.jar:" 
 				+ repoDir + "/asm/asm/1.5.3/asm-1.5.3.jar:" 
 				+ repoDir + "/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar:" 
-				+ repoDir + "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar"
-				+ "</span>", paths.get(0));
+				+ repoDir + "/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar",
+				paths.get(0));
 
 	}
 	

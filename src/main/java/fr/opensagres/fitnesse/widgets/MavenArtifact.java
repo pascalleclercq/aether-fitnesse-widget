@@ -61,8 +61,9 @@ public class MavenArtifact extends SymbolType implements Rule, PathsProvider {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
-		return Arrays.asList(translator.translate(new Symbol(MavenArtifact.symbolType).add(result.getResolvedClassPath())));
+		
+		symbol.add(result.getResolvedClassPath());
+		return Arrays.asList(translator.translate(symbol.childAt(1)));
 	}
 
 	public Maybe<Symbol> parse(Symbol current, Parser parser) {
