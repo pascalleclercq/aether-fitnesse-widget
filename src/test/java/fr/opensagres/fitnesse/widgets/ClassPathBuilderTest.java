@@ -191,7 +191,13 @@ public class ClassPathBuilderTest extends RegexTestCase {
 
 		List<String> paths = page.getData().getClasspaths();
 		System.out.println(paths.size());
-		assertTrue(paths.get(0).endsWith("target/testRepo/junit/junit/3.8.2/junit-3.8.2.jar" + "</span>"));
+		
+		assertEquals(
+				"<span class=\"meta\">classpath: " 
+				+ repoDir +"/junit/junit/3.8.2/junit-3.8.2.jar"
+				+ "</span>",
+				paths.get(0));
+
 
 	}
 	
