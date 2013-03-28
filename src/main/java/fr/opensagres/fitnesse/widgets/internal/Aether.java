@@ -1,84 +1,81 @@
-/**
- * // Copyright (C) 2003-2009 by Object Mentor, Inc. All rights reserved.
- * // Released under the terms of the CPL Common Public License version 1.0.
- */
 package fr.opensagres.fitnesse.widgets.internal;
 
 /*
  * Copyright (c) 2010 Sonatype, Inc. All rights reserved.
  *
- * This program is licensed to you under the Apache License Version 2.0,
- * and you may not use this file except in compliance with the Apache License Version 2.0.
+ * This program is licensed to you under the Apache License Version 2.0, 
+ * and you may not use this file except in compliance with the Apache License Version 2.0. 
  * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the Apache License Version 2.0 is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * Unless required by applicable law or agreed to in writing, 
+ * software distributed under the Apache License Version 2.0 is distributed on an 
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
 
-import java.util.List;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.repository.internal.DefaultServiceLocator;
-=======
->>>>>>> branch 'master' of git@github.com:pascalleclercq/aether-fitnesse-widget.git
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.repository.internal.MavenServiceLocator;
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.RepositorySystemSession;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
+import org.sonatype.aether.collection.DependencyCollectionException;
+import org.sonatype.aether.connector.wagon.WagonProvider;
+import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
 import org.sonatype.aether.graph.Dependency;
-import org.sonatype.aether.graph.DependencyFilter;
 import org.sonatype.aether.graph.DependencyNode;
+import org.sonatype.aether.installation.InstallRequest;
+import org.sonatype.aether.installation.InstallationException;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.repository.RepositoryPolicy;
-import org.sonatype.aether.resolution.DependencyRequest;
-import org.sonatype.aether.util.DefaultRepositoryCache;
-import org.sonatype.aether.util.artifact.JavaScopes;
+import org.sonatype.aether.resolution.ArtifactResolutionException;
+import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
+import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
 
 import fr.opensagres.fitnesse.widgets.internal.eclipse.EclipseWorkspaceReader;
 
-<<<<<<< HEAD
 public class Aether
 {
 
     private RepositorySystem repositorySystem;
     private LocalRepository localRepository;
-=======
-public class Aether {
->>>>>>> branch 'master' of git@github.com:pascalleclercq/aether-fitnesse-widget.git
 
-<<<<<<< HEAD
     public Aether(  )
     {
 
         this.repositorySystem = newManualSystem();
-        
+       
     }
     public void setLocalRepository(LocalRepository localRepository) {
 		this.localRepository = localRepository;
 	}
-=======
-	private List<String> remoteRepositories;
->>>>>>> branch 'master' of git@github.com:pascalleclercq/aether-fitnesse-widget.git
 
-	protected RepositorySystem repositorySystem;
+    //
+    // Setting up the repository system with the mechanism to find components
+    // and setting up the implementations to use. This would be much easier
+    // using Guice, but we want Aether to be easily embedded.
+    //
+    private RepositorySystem newManualSystem()
+    {
+    	MavenServiceLocator locator = new MavenServiceLocator();
+        locator.setServices( WagonProvider.class, new ManualWagonProvider() );
+        locator.addService( RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class );
+        return locator.getService( RepositorySystem.class );
+    }
 
-<<<<<<< HEAD
     private RepositorySystemSession newSession()
     {
         MavenRepositorySystemSession session = new MavenRepositorySystemSession();
         session.setWorkspaceReader(new EclipseWorkspaceReader());
         session.setLocalRepositoryManager( repositorySystem.newLocalRepositoryManager( localRepository ) );
       
-        session.setTransferListener( new ConsoleTransferListener( System.out ) );
-        session.setRepositoryListener( new ConsoleRepositoryListener( System.out ) );
+//        session.setTransferListener( new TransferListener()  );
+//        session.setRepositoryListener( new ConsoleRepositoryListener( System.out ) );
         return session;
     }
     
@@ -97,19 +94,12 @@ public class Aether {
     collectRequest.setRepositories(repositories);
     
     DependencyNode rootNode = repositorySystem.collectDependencies( session, collectRequest ).getRoot();
-=======
-	private LocalRepository localRepository;
->>>>>>> branch 'master' of git@github.com:pascalleclercq/aether-fitnesse-widget.git
 
-	public Aether() {
-		this.repositorySystem = ManualRepositorySystemFactory.newRepositorySystem();
-	}
+    repositorySystem.resolveDependencies( session, rootNode, null );
 
-	public void setRemoteRepositories(List<String> remoteRepositories) {
-		this.remoteRepositories = remoteRepositories;
-	}
+    StringBuffer dump = new StringBuffer();
+    displayTree( rootNode, "", dump );
 
-<<<<<<< HEAD
     PreorderNodeListGenerator nlg = new PreorderNodeListGenerator();
     rootNode.accept( nlg );
     AetherResult aetherResult =new AetherResult( rootNode, nlg.getFiles(), nlg.getClassPath() );
@@ -124,75 +114,60 @@ public class Aether {
         
         
         Dependency dependency = new Dependency( new DefaultArtifact( groupId, artifactId, "", "jar", version ), "runtime" );
-=======
-	public void setLocalRepository(String localRepository) {
-		this.localRepository = new LocalRepository(localRepository);
-	}
-	private boolean debug="true".equals(System.getProperty("DEBUG"));
-	private boolean offline="true".equals(System.getProperty("OFFLINE"));
-	protected RepositorySystemSession newSession() throws Exception {
-		MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-		session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(localRepository));
-		if(debug){
-		 session.setTransferListener(new ConsoleTransferListener());
-		 session.setRepositoryListener(new ConsoleRepositoryListener());
-		}
-		if (System.getProperty("m2eclipse.workspace.state") != null) {
-			session.setWorkspaceReader(new EclipseWorkspaceReader());
-		}
-		session.setNotFoundCachingEnabled(true);
-		session.setIgnoreInvalidArtifactDescriptor(true).setIgnoreMissingArtifactDescriptor(true);
-		session.setCache(new DefaultRepositoryCache());
-		if(offline){
-			session.setOffline(offline);
-			session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_NEVER);
-		}
->>>>>>> branch 'master' of git@github.com:pascalleclercq/aether-fitnesse-widget.git
 
-<<<<<<< HEAD
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( dependency );
         collectRequest.setRepositories(repositories);
-=======
-		return session;
-	}
->>>>>>> branch 'master' of git@github.com:pascalleclercq/aether-fitnesse-widget.git
 
-	public String resolve(Artifact artifact) throws Exception {
-		RepositorySystemSession session = newSession();
-		Dependency dependency = new Dependency(artifact, "runtime");
-		CollectRequest collectRequest = new CollectRequest();
-		collectRequest.setRoot(dependency);
-		int id = 0;
-		if (remoteRepositories != null && !remoteRepositories.isEmpty()) {
-			for (String remoteRepository : remoteRepositories) {
-				collectRequest.addRepository(new RemoteRepository("repo" + id, "default", remoteRepository));
-				id++;
-			}
-		} else {
-			collectRequest.addRepository(new RemoteRepository("central", "default", "http://repo1.maven.org/maven2"));
-		}
+        DependencyNode rootNode = repositorySystem.collectDependencies( session, collectRequest ).getRoot();
 
-		DependencyRequest dependencyRequest = new DependencyRequest();
+        repositorySystem.resolveDependencies( session, rootNode, null );
 
-		dependencyRequest.setCollectRequest(collectRequest);
-		dependencyRequest.setFilter(new DependencyFilter() {
+        StringBuffer dump = new StringBuffer();
+        displayTree( rootNode, "", dump );
 
-			@Override
-			public boolean accept(DependencyNode node, List<DependencyNode> parents) {
-				// no test dependencies
-				// no optional dependencies
-				return !node.getDependency().getScope().equals(JavaScopes.TEST) && !node.getDependency().isOptional();
-			}
-		});
+        PreorderNodeListGenerator nlg = new PreorderNodeListGenerator();
+        rootNode.accept( nlg );
 
-		DependencyNode rootNode = repositorySystem.resolveDependencies(session, dependencyRequest).getRoot();
+        return new AetherResult( rootNode, nlg.getFiles(), nlg.getClassPath() );
+    }
 
-		PreorderNodeListGenerator nlg = new PreorderNodeListGenerator();
-		rootNode.accept(nlg);
+    public void install( Artifact artifact, Artifact pom )
+        throws InstallationException
+    {
+        RepositorySystemSession session = newSession();
 
-		return nlg.getClassPath();
-	}
+        InstallRequest installRequest = new InstallRequest();
+        installRequest.addArtifact( artifact ).addArtifact( pom );
+        
+        repositorySystem.install( session, installRequest );
+    }
+
+//    public void deploy( Artifact artifact, Artifact pom, String remoteRepository )
+//        throws DeploymentException
+//    {
+//        RepositorySystemSession session = newSession();
+//
+//        RemoteRepository nexus = new RemoteRepository( "nexus", "default", remoteRepository );
+//        Authentication authentication = new Authentication( "admin", "admin123" );
+//        nexus.setAuthentication( authentication );
+//
+//        DeployRequest deployRequest = new DeployRequest();
+//        deployRequest.addArtifact( artifact ).addArtifact( pom );        
+//        deployRequest.setRepository( nexus );
+//        
+//        repositorySystem.deploy( session, deployRequest );
+//    }
+
+    private void displayTree( DependencyNode node, String indent, StringBuffer sb )
+    {
+        sb.append( indent + node.getDependency() ).append( "\n" );
+        indent += "  ";
+        for ( DependencyNode child : node.getChildren() )
+        {
+            displayTree( child, indent, sb );
+        }
+    }
 
     private List<RemoteRepository> repositories = new ArrayList<RemoteRepository>();
 	public void addRemoteRepository(RemoteRepository remoteRepository) {

@@ -11,9 +11,8 @@ package fr.opensagres.fitnesse.widgets.internal;
  *   http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-import org.apache.maven.repository.internal.DefaultServiceLocator;
+import org.apache.maven.repository.internal.MavenServiceLocator;
 import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.connector.file.FileRepositoryConnectorFactory;
 import org.sonatype.aether.connector.wagon.WagonProvider;
 import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
 import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
@@ -32,8 +31,8 @@ public class ManualRepositorySystemFactory
          * Aether's components implement org.sonatype.aether.spi.locator.Service to ease manual wiring and using the
          * prepopulated DefaultServiceLocator, we only need to register the repository connector factories.
          */
-        DefaultServiceLocator locator = new DefaultServiceLocator();
-        locator.addService( RepositoryConnectorFactory.class, FileRepositoryConnectorFactory.class );
+    	MavenServiceLocator locator = new MavenServiceLocator();
+
         locator.addService( RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class );
         locator.setServices( WagonProvider.class, new ManualWagonProvider() );
 
