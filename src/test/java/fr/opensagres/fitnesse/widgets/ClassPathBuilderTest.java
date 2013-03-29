@@ -28,7 +28,7 @@ public class ClassPathBuilderTest extends RegexTestCase {
 
 	public void setUp() throws Exception {
 		testProperties = new Properties();
-		String symbolValues = MavenArtifact.class.getName();
+		String symbolValues = MavenCoordinates.class.getName();
 		testProperties.setProperty(ComponentFactory.SYMBOL_TYPES, symbolValues);
 		factory = new ComponentFactory(testProperties);
 		factory.loadSymbolTypes();
@@ -36,11 +36,17 @@ public class ClassPathBuilderTest extends RegexTestCase {
 		crawler = root.getPageCrawler();
 	}
 	
-	public void grab_hibernate_core_on_jboss_repo() throws Exception {
+	@Override
+	protected void tearDown() throws Exception {
+		// TODO Auto-generated method stub
+		super.tearDown();
+	}
+	
+	public void test_grab_hibernate_core_on_jboss_repo() throws Exception {
 		// Complex test : Full tree resolved from http://repository.jboss.org/maven2/
 		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage3"), 
-				"!define settings {src/test/resources/settings.xml}\n"+
-				"!artifact org.hibernate:hibernate-core:3.3.0.CR1\n");
+				"!define settings {src/test/resources/settings-alternate-local-repo.xml}\n"+
+				"!coordinates org.hibernate:hibernate-core:3.3.0.CR1\n");
 		PageData data = page.getData();
 		page.commit(data);
 		List<String> paths = page.getData().getClasspaths();
@@ -61,36 +67,55 @@ public class ClassPathBuilderTest extends RegexTestCase {
 	}
 	
 	
-	public void grab_Junit382_Default() throws Exception {
+	public void test_grab_Junit382_Default() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
 		// the current module
-		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage"), "!artifact junit:junit:3.8.2\n" + "!path my.jar");
+		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage"), "!coordinates junit:junit:3.8.2\n");
 		PageData data = page.getData();
 		page.commit(data);
 
 		List<String> paths = page.getData().getClasspaths();
 		
-		assertEquals(MavenArtifact.userMavenConfigurationHome + "/repository" + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
-
-	}
-	public void grab_Junit382_With_Alternate_Settings() throws Exception {
-		// Very simple test : only 1 dependency resolved, jar is a dependency of
-		// the current module
-		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage2"), "!define settings {src/test/resources/settings.xml}\n"+"!artifact junit:junit:3.8.2\n" + "!path my.jar");
-		PageData data = page.getData();
-		page.commit(data);
-
-	//	System.out.println(builder.getClasspath(root.getChildPage("TestPage2")));
-
-		List<String> paths = page.getData().getClasspaths();
-	//	System.out.println(paths.size());
-		
-		assertEquals( repoDir +"/junit/junit/3.8.2/junit-3.8.2.jar",
-				paths.get(0));
-
+		assertEquals(MavenCoordinates.userMavenConfigurationHome + "/repository" + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
 
 	}
 	
+	public void test_Combine_Classpath() throws Exception {
+		// Very simple test : only 1 dependency resolved, jar is a dependency of
+		// the current module
+		WikiPage page = crawler.addPage(root, PathParser.parse("TestCombineClasspath"), "!coordinates junit:junit:3.8.2\n" + "!path my.jar");
+		PageData data = page.getData();
+		page.commit(data);
+
+		List<String> paths = page.getData().getClasspaths();
+		String inlineClasspath="";
+		for (String path : paths) {
+			inlineClasspath+=path;
+			inlineClasspath+=":";
+		}
+		assertEquals(MavenCoordinates.userMavenConfigurationHome + "/repository" + "/junit/junit/3.8.2/junit-3.8.2.jar:my.jar:", inlineClasspath);
+
+	}
+	public void test_grab_Junit382_With_Alternate_Settings() throws Exception {
+		// Very simple test : only 1 dependency resolved, jar is a dependency of
+		// the current module
+		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage2"), "!define settings {src/test/resources/settings-alternate-local-repo.xml}\n"+"!coordinates junit:junit:3.8.2\n" );
+		PageData data = page.getData();
+		page.commit(data);
+		List<String> paths = page.getData().getClasspaths();
+		assertEquals( repoDir +"/junit/junit/3.8.2/junit-3.8.2.jar",paths.get(0));
+	}
+	public void test_grab_coordinates_not_under_central_maven_repo() throws Exception {
+		WikiPage page = crawler.addPage(root, PathParser.parse("PlayFwk"), "!define settings {src/test/resources/settings-with-repo.xml}\n"+"!coordinates play:play_2.9.1:2.0.2\n" );
+		PageData data = page.getData();
+		page.commit(data);
+		List<String> paths = page.getData().getClasspaths();
+		System.out.println(paths.get(0));
+		assertTrue( paths.get(0).contains("/play/play_2.9.1/2.0.2/play_2.9.1-2.0.2.jar"));
+		
+	}
+
+		
 	
 	
 	
