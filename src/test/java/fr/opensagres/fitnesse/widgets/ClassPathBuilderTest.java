@@ -1,7 +1,5 @@
 package fr.opensagres.fitnesse.widgets;
 
-// Copyright (C) 2003-2009 by Object Mentor, Inc. All rights reserved.
-// Released under the terms of the CPL Common Public License version 1.0.
 
 import java.io.File;
 import java.util.List;
@@ -38,7 +36,7 @@ public class ClassPathBuilderTest extends RegexTestCase {
 		crawler = root.getPageCrawler();
 	}
 	
-	public void testComplexDependency() throws Exception {
+	public void grab_hibernate_core_on_jboss_repo() throws Exception {
 		// Complex test : Full tree resolved from http://repository.jboss.org/maven2/
 		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage3"), 
 				"!define settings {src/test/resources/settings.xml}\n"+
@@ -63,7 +61,7 @@ public class ClassPathBuilderTest extends RegexTestCase {
 	}
 	
 	
-	public void testJunit382() throws Exception {
+	public void grab_Junit382_Default() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
 		// the current module
 		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage"), "!artifact junit:junit:3.8.2\n" + "!path my.jar");
@@ -75,7 +73,7 @@ public class ClassPathBuilderTest extends RegexTestCase {
 		assertEquals(MavenArtifact.userMavenConfigurationHome + "/repository" + "/junit/junit/3.8.2/junit-3.8.2.jar", paths.get(0));
 
 	}
-	public void testJunit382AlternateSettings() throws Exception {
+	public void grab_Junit382_With_Alternate_Settings() throws Exception {
 		// Very simple test : only 1 dependency resolved, jar is a dependency of
 		// the current module
 		WikiPage page = crawler.addPage(root, PathParser.parse("TestPage2"), "!define settings {src/test/resources/settings.xml}\n"+"!artifact junit:junit:3.8.2\n" + "!path my.jar");
