@@ -9,7 +9,8 @@
 	<artifactId>aether-fitnesse-widget</artifactId>
 	<packaging>jar</packaging>
 	<version>2.0.0-SNAPSHOT</version>
-	<name>Aether FitNesse Widget</name>
+	
+	<name>Aether FitNesse Widget test</name>
 	<url>http://www.opensagres.fr</url>
 	<developers>
 		<developer>
