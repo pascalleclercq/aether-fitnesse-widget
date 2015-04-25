@@ -33,7 +33,7 @@
 	<scm>
 		<connection>scm:git:git@github.com:pascalleclercq/aether-fitnesse-widget.git</connection>
 		<developerConnection>scm:git:git@github.com:pascalleclercq/aether-fitnesse-widget.git</developerConnection>
-		<url>git@github.com:pascalleclercq/aether-fitnesse-widget.git</url>
+		<url>https://github.com/pascalleclercq/aether-fitnesse-widget</url>
 	</scm>
 	<build>
 		<plugins>
@@ -69,9 +69,26 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--<plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-gpg-plugin</artifactId> 
-				<executions> <execution> <id>sign-artifacts</id> <phase>verify</phase> <goals> 
-				<goal>sign</goal> </goals> </execution> </executions> </plugin> -->
+			<plugin>
+				<groupId>de.jutzig</groupId>
+				<artifactId>github-release-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<id>github-upload</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>release</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<releaseName>v1.0.1</releaseName>
+							<tag>v1.0.1</tag>
+							<artifact>${project.build.directory}/${project.groupId}.${project.artifactId}-${project.version}.jar</artifact>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -135,7 +152,7 @@
 			<artifactId>maven-settings-builder</artifactId>
 			<version>3.0.5</version>
 		</dependency>
-		
+
 	</dependencies>
 
 	<properties>
