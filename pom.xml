@@ -82,8 +82,8 @@
 						</goals>
 						<inherited>false</inherited>
 						<configuration>
-							<releaseName>v1.0.1</releaseName>
-							<tag>v1.0.1</tag>
+							<releaseName>${project.artifactId}-${project.version}</releaseName>
+							<tag>v${project.version}</tag>
 							<artifact>${project.build.directory}/${project.groupId}.${project.artifactId}-${project.version}.jar</artifact>
 						</configuration>
 					</execution>
